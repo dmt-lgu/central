@@ -21,12 +21,12 @@ export const UtiStatus = () => {
         </div>
 
         {/* Bar Chart */}
-        <div className='relative w-full flex md:flex-col h-full justify-center gap-10 bg-white rounded-lg mb-5 border p-4'>
+        <div className='relative w-full flex md:flex-col h-full justify-center gap-10 bg-white rounded-lg mb-5 border p-4 overflow-auto'>
           <BarChart />
         </div>
 
         {/* Table Status*/}
-        <div className='relative flex md:flex-col h-full justify-between gap-10 bg-white rounded-lg w-full mb-5 border p-4'>
+        <div className='relative flex md:flex-col h-full justify-between gap-10 bg-white rounded-lg w-full mb-5 border p-4 overflow-auto'>
           <TableStatus />
         </div>
 

@@ -30,7 +30,7 @@ function TableStatus() {
         { name: 'Certificate of Occupancy', values: [15, 9, 10, 10] },
       ];
   return (
-    <div className="overflow-auto w-full">
+    <div className="w-full">
         <Table className="min-w-full bg-white border border-gray-200">
           <TableHeader className="bg-white">
               <TableRow className="border-b">
