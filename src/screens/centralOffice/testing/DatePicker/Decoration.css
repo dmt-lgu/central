@@ -1,0 +1,15 @@
+.garlan{
+    position: absolute;
+    left: 0;
+    color: green;
+    margin-top: 10px;
+    margin-left: 30px;
+}
+
+
+.christmas-light{
+    position: absolute;
+    z-index: 2;
+    color: green;
+    animation: blink 500ms ease-in-out infinite;
+}

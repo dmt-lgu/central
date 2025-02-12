@@ -1,0 +1,122 @@
+[
+    {
+      "id": "Region-I",
+      "operational": 278,
+      "development": 22,
+      "trainingOrOthers": 19,
+      "withdraw": 18
+    },
+    {
+      "id": "Region-II",
+      "operational": 251,
+      "development": 74,
+      "trainingOrOthers": 7,
+      "withdraw": 33
+    },
+    {
+      "id": "Region-III",
+      "operational": 188,
+      "development": 68,
+      "trainingOrOthers": 31,
+      "withdraw": 46
+    },
+    {
+      "id": "Region-IV-A",
+      "operational": 239,
+      "development": 35,
+      "trainingOrOthers": 43,
+      "withdraw": 7
+    },
+    {
+      "id": "Region-IV-B",
+      "operational": 286,
+      "development": 92,
+      "trainingOrOthers": 11,
+      "withdraw": 30
+    },
+    {
+      "id": "Region-V",
+      "operational": 187,
+      "development": 51,
+      "trainingOrOthers": 26,
+      "withdraw": 39
+    },
+    {
+      "id": "Region-VI",
+      "operational": 131,
+      "development": 40,
+      "trainingOrOthers": 39,
+      "withdraw": 42
+    },
+    {
+      "id": "Region-VII",
+      "operational": 135,
+      "development": 64,
+      "trainingOrOthers": 46,
+      "withdraw": 24
+    },
+    {
+      "id": "Region-VIII",
+      "operational": 133,
+      "development": 66,
+      "trainingOrOthers": 7,
+      "withdraw": 47
+    },
+    {
+      "id": "Region-IX",
+      "operational": 236,
+      "development": 32,
+      "trainingOrOthers": 46,
+      "withdraw": 22
+    },
+    {
+      "id": "Region-X",
+      "operational": 211,
+      "development": 74,
+      "trainingOrOthers": 22,
+      "withdraw": 0
+    },
+    {
+      "id": "Region-XI",
+      "operational": 338,
+      "development": 44,
+      "trainingOrOthers": 6,
+      "withdraw": 49
+    },
+    {
+      "id": "Region-XII",
+      "operational": 100,
+      "development": 90,
+      "trainingOrOthers": 33,
+      "withdraw": 11
+    },
+    {
+      "id": "CAR",
+      "operational": 162,
+      "development": 56,
+      "trainingOrOthers": 31,
+      "withdraw": 32
+    },
+    {
+      "id": "NCR",
+      "operational": 143,
+      "development": 81,
+      "trainingOrOthers": 32,
+      "withdraw": 16
+    },
+    {
+      "id": "BARMM",
+      "operational": 233,
+      "development": 36,
+      "trainingOrOthers": 7,
+      "withdraw": 28
+    },
+    {
+      "id": "Region-XIII",
+      "operational": 111,
+      "development": 70,
+      "trainingOrOthers": 39,
+      "withdraw": 24
+    }
+  ]
+  

@@ -1,0 +1,87 @@
+[
+    {
+      "region": "NCR",
+      "name": "National Capital Region",
+      "url": "1RlZ-M_WkVTpoWv3IqcILF6M28yYdErlyGbA6y8wJ6FM"
+    },
+    {
+      "region": "CAR", 
+      "name": "Cordillera Administrative Region",
+      "url": "17blIJwURfhtmDbeq2YrMsS3q_JUO-8rqa6D51gbjcfo"
+    },
+    {
+      "region": "I",
+      "name": "Ilocos Region",
+      "url": "1aW6pSlp6O11dNMOAIGjLJlOgHoX3vLk9sMj_e-nU8gk"
+    },
+    {
+      "region": "II",
+      "name": "Cagayan Valley",
+      "url": "1h9t1moHZh8ytyWubpBp-vfIMzcCLfc1CaySr0z2akZ4"
+    },
+    {
+      "region": "III",
+      "name": "Central Luzon",
+      "url": "11DSaGKaDhtLfr5hY_oMoO7u7985yMJhTy5NP2KpZwnk"
+    },
+    {
+      "region": "IV-A",
+      "name": "CALABARZON",
+      "url": "1TFMqlz7mSGfL_AJupTr5ZXVfhEUn0wwOg_vo6jasmIc"
+    },
+    {
+        "region": "IV-B",
+        "name": "MIMAROPA",
+        "url": "1_cVbIXzPOlzV3oh1rIFoCODxZsEDVUojUdneAO9XuxU"
+      },
+    {
+      "region": "V",
+      "name": "Bicol Region",
+      "url": "1nIZ-DdDcEeWgRIJg9Bn0U2iU3iQg8MssskdbpinJ6n8"
+    },
+    {
+      "region": "VI",
+      "name": "Western Visayas",
+      "url": "1l14RYdYACvMgQ3dhm2lgkVALBQIqmoNrka-i6LRHKHs"
+    },
+    {
+      "region": "VII",
+      "name": "Central Visayas",
+      "url": "1rRDCkgrBkQuxZT5Y-Y8qR8RpbNgVKiX8Oy231CjmPAc"
+    },
+    {
+      "region": "VIII",
+      "name": "Eastern Visayas",
+      "url": "1rbnfj3UEUDd93ufNsSDV9vLFkPrVQuE8YMBMc3z3Pwc"
+    },
+    {
+      "region": "IX",
+      "name": "Zamboanga Peninsula",
+      "url": "1z3_09gLfBo-qouXfRlTn_81Cwq895XHxm_VwmOXkIBA"
+    },
+    {
+      "region": "X",
+      "name": "Northern Mindanao",
+      "url": "18F-3EfgyWLd9L7h8zRtxbUehzOZMxhbj-cSSR6jHksM"
+    },
+    {
+      "region": "XI",
+      "name": "Davao Region",
+      "url": "1BoknCplqeR86gLfJk1tiWDMGbfo-eouVdXyQYe9T0_g"
+    },
+    {
+      "region": "XII",
+      "name": "SOCCSKSARGEN",
+      "url": "1TaKl0c1kx0UwpnACtsPt_k3iffdxhbPXv0u7e4vQKjM"
+    },
+    {
+      "region": "XIII",
+      "name": "Caraga",
+      "url": "1JOfQsuPiaCTv18Us9tgO1ImjofGD6EMiTrhUzvlvT74"
+    },
+    {
+      "region": "BARMM",
+      "name": "Bangsamoro Autonomous Region in Muslim Mindanao",
+      "url": "1epj3jAY7XVz4Ie92W2h1_H_snlYkKJKcqMPYT8nzN0Y"
+    }
+  ]
