@@ -309,8 +309,6 @@ function App() {
     getCO();
     getWP()
     getBC();
-
-    console.log(services);
     
   }, []);
 

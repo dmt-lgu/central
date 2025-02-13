@@ -96,17 +96,17 @@ function LineCharts() {
         }
       };
   return (
-    <div className='grid grid-cols-2 gap-4 md:flex-wrap p-4 w-full overflow-x-auto'>
-        <div className='bg-white p-4 rounded-lg border shadow-md w-full md:w-1/2 lg:w-1/4'>
+    <div className='grid grid-cols-2 gap-4 w-full md:grid-cols-1'>
+        <div className='bg-white rounded-lg border shadow-md p-3'>
             <Chart options={optionsOperational} series={combinedSeries} type="line" />
         </div>
-        <div className='bg-white p-4 rounded-lg border shadow-md w-full md:w-1/2 lg:w-1/4'>
+        <div className='bg-white rounded-lg border shadow-md p-3'>
             <Chart options={optionsDevelopmental} series={combinedSeries} type="line" />
         </div>
-        <div className='bg-white p-4 rounded-lg border shadow-md w-full md:w-1/2 lg:w-1/4'>
+        <div className='bg-white rounded-lg border shadow-md p-3'>
             <Chart options={optionsForTraining} series={combinedSeries} type="line" />
         </div>
-        <div className='bg-white p-4 rounded-lg border shadow-md w-full md:w-1/2 lg:w-1/4'>
+        <div className='bg-white rounded-lg border shadow-md p-3'>
             <Chart options={optionsWithdraw} series={combinedSeries} type="line" />
         </div>
     </div>

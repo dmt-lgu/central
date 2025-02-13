@@ -51,7 +51,7 @@ function BarChart() {
         },
     ];
     return (
-        <div className='min-w-[1000px] flex justify-center p-10 z-0'>
+        <div className='w-full md:w-[800px] flex justify-center p-10 z-0'>
             <Chart className="w-full" options={chartOptions} series={chartSeries} type="bar" height={350} />
         </div>
   )
