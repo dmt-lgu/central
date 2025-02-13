@@ -157,7 +157,7 @@ const LGU: React.FC = () => {
 
   return (
     <div className="w-full h-full px-5 flex flex-col items-center gap-10">
-      <div className="bg-[#EBEFF5] border border-border flex flex-col px-10 py-4 rounded w-[80%] relative">
+      <div className="bg-[#EBEFF5] border md:mt-20 border-border flex flex-col px-10 py-4 rounded w-[80%] md:w-full relative">
         <div className="flex flex-col gap-2 w-full">
           <label htmlFor="search" className="block text-[#6B6B6B] font-gmedium">
             LGU
@@ -189,7 +189,7 @@ const LGU: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-6 w-[60%] self-center flex rounded-md bg-white border border-border">
+      <div className="mt-6 w-[60%] md:w-full self-center flex rounded-md bg-white border border-border">
         <table className="w-full text-left rounded-2xl overflow-hidden border border-border">
           <tbody>
             <tr>

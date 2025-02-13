@@ -208,8 +208,8 @@ function App() {
               )}
 
 
-              <div className="flex-1 ml-[20vw] md:ml-0">
-              <header className="sticky top-0 z-50 bg-white/20 backdrop-blur-md h-[100px] w-full px-20 md:px-5 flex items-center justify-between text-[#6B6B6B]">
+              <div className="flex-1 ml-[20vw] md:ml-0 ">
+              <header className="md:fixed md:mt-24 sticky top-0 z-20 bg-white/20 backdrop-blur-md h-[100px] w-full px-20 md:px-5 flex items-center justify-between text-[#6B6B6B]">
                 <ul className="flex gap-10 md:text-base md:gap-5">
                   {menuItems.sort((a, b) => a.name.localeCompare(b.name)).map((item) => (
                     <li
@@ -226,11 +226,13 @@ function App() {
                   ))}
                 </ul>
 
-                <div className="flex gap-2 items-center md:hidden">
-                  <img className="rounded-full w-10 h-10" src={Profile} alt="" />
-                  <div className="font-gsemibold">Welcome, (Nico Gwapo)</div>
+                <div className="flex gap-2 items-center md:hidden ">
+                  <img className="rounded-full w-10 h-10 " src={Profile} alt="" />
+                  <div className="font-gsemibold ">Welcome, (Nico Gwapo)</div>
                 </div>
               </header>
+
+
 
               <main className="w-full">
                 <Outlet />
