@@ -245,7 +245,7 @@ function App() {
 
   }
   function getBC() {
-    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input', {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input', {
       headers: {
         Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
       }
@@ -305,10 +305,10 @@ function App() {
   }, [monthlyStats]);
 
   useEffect(() => {
-    getBP();
-    getCO();
-    getWP()
-    getBC();
+    // getBP();
+    // getCO();
+    // getWP()
+    // getBC();
     
   }, []);
 
@@ -374,7 +374,7 @@ function App() {
 
             <div className="flex gap-2 items-center">
               <img className="rounded-full w-10 h-10" src={Profile} alt="" />
-              <div className="font-gsemibold">Welcome, (Nico Gwapo)</div>
+              <div className="font-gsemibold">Welcome, (Juan)</div>
             </div>
           </header>
 

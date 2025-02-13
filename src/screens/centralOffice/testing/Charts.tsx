@@ -178,8 +178,8 @@ const ChartsDashboard: React.FC = () => {
 
   // Get data for pie chart based on selected metric
   const getPieChartData = () => {
-    const metricData = values.find(v => v.name === selectedMetric);
-    return metricData ? metricData.data : [];
+    
+    return [203,192,20,106]
   };
 
   // Updated Pie Chart Configuration
@@ -188,8 +188,10 @@ const ChartsDashboard: React.FC = () => {
       type: 'pie',
       height: 350,
     },
-    labels: xaxis.categories,
-    colors:  [ '#fbbf24','#1e40af'],
+    labels: [
+      'Operational','Developmental','For Training/Others','Withdraw'
+    ],
+    colors:  [ '#0134b2','#f5cf1b','#6fd0f2','#d01028'],
     legend: {
       position: 'right',
       fontSize: '12px',
@@ -197,7 +199,7 @@ const ChartsDashboard: React.FC = () => {
       
     },
     title: {
-      text: `Regional Distribution - ${selectedMetric}`,
+      text: `Status Distribution - ${selectedMetric}`,
       align: 'left',
     },
   };
@@ -227,16 +229,7 @@ const ChartsDashboard: React.FC = () => {
 
         {isPieGraphVisible && (
           <div className="bg-white rounded-lg className=' w-full' shadow-md p-4">
-            <div className="mb-4">
-              <select 
-                value={selectedMetric}
-                onChange={(e) => setSelectedMetric(e.target.value as 'Operational' | 'Developmental')}
-                className="w-full md:w-auto px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="Operational">Operational</option>
-                <option value="Developmental">Developmental</option>
-              </select>
-            </div>
+          
             <Chart 
               options={pieChartOptions} 
               series={getPieChartData()} 

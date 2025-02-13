@@ -1,22 +1,23 @@
 import axios from "./../../../plugin/axios";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
+import { selectProject } from "@/redux/projectSlice";
+import { useSelector } from "react-redux";
 
 interface LGU {
   geocode: string;
-  lguFullName: string;  // Changed from name
+  lguFullName: string;
   province: string;
   region: string;
   district: string;
   level: string;
   incomeClass: string;
-  monthlyStatus: string;  // Changed from utilizationStatus
-  // Add other fields as needed
+  monthlyStatus: string;
 }
 
 interface LGUData {
   lguFullName: string;
-  monthlyStatus: string;
+  monthlyStatus: Record<string, string>;
   progressRate: string;
   concerns: string;
   actionItems: string;
@@ -40,8 +41,9 @@ const LGU: React.FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [selectedLGU, setSelectedLGU] = useState<LGU | null>(null);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [statusMap, setStatusMap] = useState<Map<string, Record<string, string>>>(new Map());
+  const services = useSelector(selectProject);
 
-  // Debounce the search update
   const debouncedSetSearch = useCallback(
     debounce((value: string) => {
       setDebouncedSearch(value);
@@ -73,6 +75,223 @@ const LGU: React.FC = () => {
     [debouncedSearch, lguList]
   );
 
+  function transformLGUData(rawData: string[][], serviceType: string) {
+    const allLGUs = rawData.slice(3).map(row => {
+      const geocode = row[12] || '';
+      const status = row[10]?.slice(4) || '';
+      
+      // Update status map
+      const currentStatuses = statusMap.get(geocode) || {};
+      statusMap.set(geocode, {
+        ...currentStatuses,
+        [serviceType]: status
+      });
+
+      // Create combined status string
+      const combinedStatus = Object.entries(statusMap.get(geocode) || {})
+        .map(([service, status]) => `${service}: ${status}`)
+        .join(' | ');
+
+      return {
+        lguFullName: row[4] || '',
+        monthlyStatus: { [serviceType]: status },
+        progressRate: row[6] || '',
+        concerns: row[7] || '',
+        actionItems: row[8] || '',
+        otherRemarks: row[9] || '',
+        universalStatus: row[10] || '',
+        mpar: row[11] || '',
+        geocode,
+        cm: row[13] || '',
+        province: row[14] || '',
+        region: row[15] || '',
+        district: row[16] || '',
+        level: row[17] || '',
+        incomeClass: row[18] || '',
+        dictRo: row[19] || '',
+        sort: row[20] || ''
+      };
+    });
+
+    // Create a Map to store unique LGUs using geocode as the key
+    const uniqueLGUs = new Map();
+    
+    allLGUs.forEach(lgu => {
+      if (!uniqueLGUs.has(lgu.geocode)) {
+        uniqueLGUs.set(lgu.geocode, {
+          ...lgu,
+          monthlyStatus: statusMap.get(lgu.geocode) || {}
+        });
+      }
+    });
+
+    return Array.from(uniqueLGUs.values());
+  }
+
+  const formatMonthlyStatus = (statuses: Record<string, string>) => {
+    return Object.entries(statuses)
+      .map(([service, status]) => `${service}: ${status}`)
+      .join(' | ');
+  };
+
+  function GetBP() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      },
+    }).then((response) => {
+      const rawData = response.data.values;
+      const transformedData = transformLGUData(rawData, 'BP');
+      setLguList(prevList => {
+        const newList = [...prevList];
+        transformedData.forEach(lgu => {
+          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
+          if (existingIndex === -1) {
+            newList.push(lgu);
+          } else {
+            newList[existingIndex] = {
+              ...newList[existingIndex],
+              monthlyStatus: {
+                ...newList[existingIndex].monthlyStatus,
+                ...lgu.monthlyStatus
+              }
+            };
+          }
+        });
+        return newList;
+      });
+    }).catch(error => {
+      console.error('Error fetching BP data:', error);
+    });
+  }
+
+  function GetBC() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      },
+    }).then((response) => {
+      const rawData = response.data.values;
+      const transformedData = transformLGUData(rawData, 'BC');
+      setLguList(prevList => {
+        const newList = [...prevList];
+        transformedData.forEach(lgu => {
+          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
+          if (existingIndex === -1) {
+            newList.push(lgu);
+          } else {
+            newList[existingIndex] = {
+              ...newList[existingIndex],
+              monthlyStatus: {
+                ...newList[existingIndex].monthlyStatus,
+                ...lgu.monthlyStatus
+              }
+            };
+          }
+        });
+        return newList;
+      });
+    }).catch(error => {
+      console.error('Error fetching BC data:', error);
+    });
+  }
+  function GetWP() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      },
+    }).then((response) => {
+      const rawData = response.data.values;
+      const transformedData = transformLGUData(rawData, 'WP');
+      setLguList(prevList => {
+        const newList = [...prevList];
+        transformedData.forEach(lgu => {
+          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
+          if (existingIndex === -1) {
+            newList.push(lgu);
+          } else {
+            newList[existingIndex] = {
+              ...newList[existingIndex],
+              monthlyStatus: {
+                ...newList[existingIndex].monthlyStatus,
+                ...lgu.monthlyStatus
+              }
+            };
+          }
+        });
+        return newList;
+      });
+    }).catch(error => {
+      console.error('Error fetching WP data:', error);
+    });
+  }
+  function GetCO() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BPCO UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      },
+    }).then((response) => {
+      const rawData = response.data.values;
+      const transformedData = transformLGUData(rawData, 'CO');
+      setLguList(prevList => {
+        const newList = [...prevList];
+        transformedData.forEach(lgu => {
+          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
+          if (existingIndex === -1) {
+            newList.push(lgu);
+          } else {
+            newList[existingIndex] = {
+              ...newList[existingIndex],
+              monthlyStatus: {
+                ...newList[existingIndex].monthlyStatus,
+                ...lgu.monthlyStatus
+              }
+            };
+          }
+        });
+        return newList;
+      });
+    }).catch(error => {
+      console.error('Error fetching CO data:', error);
+    });
+  }
+
+  useEffect(() => {
+    setLguList([]);
+    setSelectedLGU(selectedLGU); // Reset selectedLGU when services change
+    if (services.includes("Working Permit")) {
+      GetWP();
+    }
+    if (services.includes("Building Permit")) {
+      GetBP();
+    }
+    if (services.includes("Certificate of Occupancy")) {
+      GetCO();
+    }
+    if (services.includes("Barangay Clearance")) {
+      GetBC();
+    }
+    
+  }, [services]);
+
+  useEffect(() => {
+    if (selectedLGU && lguList.length > 0) {
+      const updatedLgu = lguList.find(lgu => lgu.geocode === selectedLGU.geocode);
+      if (updatedLgu) {
+        setSelectedLGU({
+          geocode: updatedLgu.geocode,
+          lguFullName: updatedLgu.lguFullName,
+          province: updatedLgu.province,
+          region: updatedLgu.region,
+          district: updatedLgu.district,
+          level: updatedLgu.level,
+          incomeClass: updatedLgu.incomeClass,
+          monthlyStatus: formatMonthlyStatus(updatedLgu.monthlyStatus)
+        });
+      }
+    }
+  }, [lguList]);
+
   const handleSelect = (lgu: LGUData) => {
     setSearch(lgu.lguFullName);
     setSelectedLGU({
@@ -83,7 +302,7 @@ const LGU: React.FC = () => {
       district: lgu.district,
       level: lgu.level,
       incomeClass: lgu.incomeClass,
-      monthlyStatus: lgu.monthlyStatus
+      monthlyStatus: formatMonthlyStatus(lgu.monthlyStatus)
     });
     setShowSuggestions(false);
   };
@@ -98,62 +317,6 @@ const LGU: React.FC = () => {
       setShowSuggestions(true);
     }
   };
-
-
-  function transformLGUData(rawData: string[][]) {
-    // Skip header rows (first 3 rows)
-    const allLGUs = rawData.slice(3).map(row => ({
-      lguFullName: row[4] || '',
-      monthlyStatus: row[5] || '',
-      progressRate: row[6] || '',
-      concerns: row[7] || '',
-      actionItems: row[8] || '',
-      otherRemarks: row[9] || '',
-      universalStatus: row[10] || '',
-      mpar: row[11] || '',
-      geocode: row[12] || '',
-      cm: row[13] || '',
-      province: row[14] || '',
-      region: row[15] || '',
-      district: row[16] || '',
-      level: row[17] || '',
-      incomeClass: row[18] || '',
-      dictRo: row[19] || '',
-      sort: row[20] || ''
-    }));
-
-    // Create a Map to store unique LGUs using geocode as the key
-    const uniqueLGUs = new Map();
-    
-    allLGUs.forEach(lgu => {
-      // Only store the first occurrence of each LGU
-      if (!uniqueLGUs.has(lgu.geocode)) {
-        uniqueLGUs.set(lgu.geocode, lgu);
-      }
-    });
-
-    // Convert Map back to array
-    return Array.from(uniqueLGUs.values());
-  }
-
-  function GetLGUs() {
-    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input', {
-      headers: {
-        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
-      },
-    }).then((response) => {
-      const rawData = response.data.values;
-      const transformedData = transformLGUData(rawData);
-      console.log(transformedData);
-      setLguList(transformedData);
-    }).catch(error => {
-      console.error('Error fetching LGU data:', error);
-    });
-  }
-
-  useEffect(() => {
-    GetLGUs();
-  }, []);
 
   return (
     <div className="w-full h-full px-5 flex flex-col items-center gap-10">
@@ -222,7 +385,7 @@ const LGU: React.FC = () => {
             </tr>
             <tr>
               <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Utilization Status</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.monthlyStatus || "-"}</td>
+              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.monthlyStatus|| "-"}</td>
             </tr>
           </tbody>
         </table>
