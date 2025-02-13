@@ -9,7 +9,9 @@ import Profile from "./assets/Layer_1@2x.png";
 import APIs from "./screens/index.json"
 import axios from "./plugin/axios";
 import { useSelector} from 'react-redux';
-import {selectRegions } from './redux/regionSlice';
+import {selectRegions} from './redux/regionSlice';
+import { selectProject } from "./redux/projectSlice";
+
 interface RegionData {
   region: string;
   operational: number;
@@ -18,14 +20,49 @@ interface RegionData {
   WITHDRAW: number;
 }
 
+interface LguDetails {
+  id: string;
+  lguName: string;
+  status: string;
+  progressRate: string;
+  concerns: string;
+  actionItems: string;
+  otherRemarks: string;
+  universalStatus: string;
+  mpar: string;
+  geocode: string;
+  name: string;
+  province: string;
+  region: string;
+  district: string;
+  level: string;
+  incomeClass: string;
+  dictRo: string;
+}
+
 interface MonthlyData {
-  date: string;
-  data: RegionData[];
+  BP?: Array<{
+    date: string;
+    values: LguDetails[];
+  }>;
+  CO?: Array<{
+    date: string;
+    values: LguDetails[];
+  }>;
+  WP?: Array<{
+    date: string;
+    values: LguDetails[];
+  }>;
+  BC?: Array<{
+    date: string;
+    values: LguDetails[];
+  }>;
 }
 
 function App() {
 
   const regionss = useSelector(selectRegions);
+  const services = useSelector(selectProject);
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -35,10 +72,10 @@ function App() {
     { name: "LGU", path: "/central/lgu" }
   ];
 
-  const [monthlyStats, setMonthlyStats] = useState<MonthlyData[]>([]);
+  const [monthlyStats, setMonthlyStats] = useState<MonthlyData>({});
 
  
-  function getMonthlyStats() {
+  function getBP() {
     axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input', {
       headers: {
         Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
@@ -85,13 +122,196 @@ function App() {
   
       // Convert to array format
       const result:any = Object.values(groupedByMonth);
-      setMonthlyStats(result);
+      setMonthlyStats(prevStats => ({
+        ...prevStats,
+        BP: result
+      }));
       
-      console.log(result);
+      
     });
   }
+
+  function getCO() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BPCO UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      }
+    }).then((response) => {
+      const data = response.data.values;
+      // Skip first 3 rows as they are headers
+      const records = data.slice(3);
+      
+      // Group by period (YYYY-MM)
+      const groupedByMonth = records.reduce((acc: any, row: any) => {
+        const period = row[1]; // period is in column index 1 (2024-01)
+        
+        const lguDetails = {
+          id: row[0],
+          lguName: row[4],
+          status: row[5],
+          progressRate: row[6],
+          concerns: row[7],
+          actionItems: row[8],
+          otherRemarks: row[9],
+          universalStatus: row[10],
+          mpar: row[11],
+          geocode: row[12],
+          name: row[13],
+          province: row[14],
+          region: row[15],
+          district: row[16],
+          level: row[17],
+          incomeClass: row[18],
+          dictRo: row[19]
+        };
+  
+        if (!acc[period]) {
+          acc[period] = {
+            date: period,
+            values: []
+          };
+        }
+  
+        acc[period].values.push(lguDetails);
+        return acc;
+      }, {});
+  
+      // Convert to array format
+      const result:any = Object.values(groupedByMonth);
+      setMonthlyStats(prevStats => ({
+        ...prevStats,
+        CO: result
+      }));
+      
+      
+    });
+
+  }
+
+  function getWP() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      }
+    }).then((response) => {
+      const data = response.data.values;
+      // Skip first 3 rows as they are headers
+      const records = data.slice(3);
+      
+      // Group by period (YYYY-MM)
+      const groupedByMonth = records.reduce((acc: any, row: any) => {
+        const period = row[1]; // period is in column index 1 (2024-01)
+        
+        const lguDetails = {
+          id: row[0],
+          lguName: row[4],
+          status: row[5],
+          progressRate: row[6],
+          concerns: row[7],
+          actionItems: row[8],
+          otherRemarks: row[9],
+          universalStatus: row[10],
+          mpar: row[11],
+          geocode: row[12],
+          name: row[13],
+          province: row[14],
+          region: row[15],
+          district: row[16],
+          level: row[17],
+          incomeClass: row[18],
+          dictRo: row[19]
+        };
+  
+        if (!acc[period]) {
+          acc[period] = {
+            date: period,
+            values: []
+          };
+        }
+  
+        acc[period].values.push(lguDetails);
+        return acc;
+      }, {});
+  
+      // Convert to array format
+      const result:any = Object.values(groupedByMonth);
+      setMonthlyStats(prevStats => ({
+        ...prevStats,
+        WP: result
+      }));
+      
+      
+    });
+
+  }
+  function getBC() {
+    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input', {
+      headers: {
+        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
+      }
+    }).then((response) => {
+      const data = response.data.values;
+      // Skip first 3 rows as they are headers
+      const records = data.slice(3);
+      
+      // Group by period (YYYY-MM)
+      const groupedByMonth = records.reduce((acc: any, row: any) => {
+        const period = row[1]; // period is in column index 1 (2024-01)
+        
+        const lguDetails = {
+          id: row[0],
+          lguName: row[4],
+          status: row[5],
+          progressRate: row[6],
+          concerns: row[7],
+          actionItems: row[8],
+          otherRemarks: row[9],
+          universalStatus: row[10],
+          mpar: row[11],
+          geocode: row[12],
+          name: row[13],
+          province: row[14],
+          region: row[15],
+          district: row[16],
+          level: row[17],
+          incomeClass: row[18],
+          dictRo: row[19]
+        };
+  
+        if (!acc[period]) {
+          acc[period] = {
+            date: period,
+            values: []
+          };
+        }
+  
+        acc[period].values.push(lguDetails);
+        return acc;
+      }, {});
+  
+      // Convert to array format
+      const result:any = Object.values(groupedByMonth);
+      setMonthlyStats(prevStats => ({
+        ...prevStats,
+        BC: result
+      }));
+      
+      
+    });
+
+  }
   useEffect(() => {
-    getMonthlyStats();
+    console.log(monthlyStats);
+  }, [monthlyStats]);
+
+  useEffect(() => {
+    getBP();
+    getCO();
+    getWP()
+    getBC();
+
+    console.log(services);
+    
   }, []);
 
   // Initialize activeItem from localStorage or based on current path
