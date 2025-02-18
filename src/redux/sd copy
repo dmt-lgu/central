@@ -1,0 +1,69 @@
+
+{BC : 
+[
+    {date:'2024-01',data:
+[
+{region:'R1',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+},
+{region:'R2',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+}
+]
+
+
+},...
+
+
+]
+, BP :
+[
+    {date:'2024-01',data:
+[
+{region:'R1',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+},
+{region:'R2',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+}
+]
+
+
+},...
+
+
+]
+,CO : 
+[
+    {date:'2024-01',data:
+[
+{region:'R1',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+},
+{region:'R2',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+}
+]
+
+
+},...
+
+
+]
+WP :
+[
+    {date:'2024-01',data:
+[
+{region:'R1',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+},
+{region:'R2',
+operational:univsalstatuscount,developmental:univsalstatuscount,Training/Others:univsalstatuscount,Withdraw:univsalstatuscount
+}
+]
+
+
+},...
+
+
+]}

@@ -1,8 +1,7 @@
 import axios from "./../../../plugin/axios";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { debounce, set } from "lodash";
-import { selectProject } from "@/redux/projectSlice";
-import { useSelector } from "react-redux";
+import { debounce} from "lodash";
+
 
 interface LGU {
   geocode: string;
@@ -35,14 +34,22 @@ interface LGUData {
   sort: string;
 }
 
+const API_ENDPOINTS = {
+  BP: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input',
+  CO: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BPCO UR Input',
+  WP: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input',
+  BC: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input'
+};
+
 const LGU: React.FC = () => {
   const [lguList, setLguList] = useState<LGUData[]>([]);
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [selectedLGU, setSelectedLGU] = useState<LGU | null>(null);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [statusMap, setStatusMap] = useState<Map<string, Record<string, string>>>(new Map());
-  const services = useSelector(selectProject);
+  const [statusMap, _setStatusMap] = useState<Map<string, Record<string, string>>>(new Map());
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
 
   const debouncedSetSearch = useCallback(
     debounce((value: string) => {
@@ -75,57 +82,61 @@ const LGU: React.FC = () => {
     [debouncedSearch, lguList]
   );
 
+  const fetchData = async (endpoint: string, serviceType: string) => {
+    try {
+      const { data } = await axios.get(endpoint, {
+        headers: { Authorization: `Token ${import.meta.env.VITE_TOKEN}` }
+      });
+      return transformLGUData(data.values, serviceType);
+    } catch (error) {
+      console.error(`Error fetching ${serviceType} data:`, error);
+      return [];
+    }
+  };
+
   function transformLGUData(rawData: string[][], serviceType: string) {
-    const allLGUs = rawData.slice(3).map(row => {
-      const geocode = row[12] || '';
+    const records = rawData.slice(3);
+    const processedData = new Map();
+
+    records.forEach(row => {
+      const geocode = row[12];
+      if (!geocode) return;
+
       const status = row[10]?.slice(4) || '';
-      
-      // Update status map
       const currentStatuses = statusMap.get(geocode) || {};
+      
       statusMap.set(geocode, {
         ...currentStatuses,
         [serviceType]: status
       });
 
-      // Create combined status string
-      const combinedStatus = Object.entries(statusMap.get(geocode) || {})
-        .map(([service, status]) => `${service}: ${status}`)
-        .join(' | ');
-
-      return {
-        lguFullName: row[4] || '',
-        monthlyStatus: { [serviceType]: status },
-        progressRate: row[6] || '',
-        concerns: row[7] || '',
-        actionItems: row[8] || '',
-        otherRemarks: row[9] || '',
-        universalStatus: row[10] || '',
-        mpar: row[11] || '',
-        geocode,
-        cm: row[13] || '',
-        province: row[14] || '',
-        region: row[15] || '',
-        district: row[16] || '',
-        level: row[17] || '',
-        incomeClass: row[18] || '',
-        dictRo: row[19] || '',
-        sort: row[20] || ''
-      };
-    });
-
-    // Create a Map to store unique LGUs using geocode as the key
-    const uniqueLGUs = new Map();
-    
-    allLGUs.forEach(lgu => {
-      if (!uniqueLGUs.has(lgu.geocode)) {
-        uniqueLGUs.set(lgu.geocode, {
-          ...lgu,
-          monthlyStatus: statusMap.get(lgu.geocode) || {}
+      if (serviceType === 'BP' || !processedData.has(geocode)) {
+        processedData.set(geocode, {
+          lguFullName: row[4] || '',
+          monthlyStatus: { [serviceType]: status },
+          progressRate: row[6] || '',
+          concerns: row[7] || '',
+          actionItems: row[8] || '',
+          otherRemarks: row[9] || '',
+          universalStatus: row[10] || '',
+          mpar: row[11] || '',
+          geocode,
+          cm: row[13] || '',
+          province: row[14] || '',
+          region: row[15] || '',
+          district: row[16] || '',
+          level: row[17] || '',
+          incomeClass: row[18] || '',
+          dictRo: row[18] || '',
+          sort: row[19] || ''
         });
+      } else {
+        const existing = processedData.get(geocode);
+        existing.monthlyStatus[serviceType] = status;
       }
     });
 
-    return Array.from(uniqueLGUs.values());
+    return Array.from(processedData.values());
   }
 
   const formatMonthlyStatus = (statuses: Record<string, string>) => {
@@ -134,145 +145,42 @@ const LGU: React.FC = () => {
       .join(' | ');
   };
 
-  function GetBP() {
-    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input', {
-      headers: {
-        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
-      },
-    }).then((response) => {
-      const rawData = response.data.values;
-      const transformedData = transformLGUData(rawData, 'BP');
-      setLguList(prevList => {
-        const newList = [...prevList];
-        transformedData.forEach(lgu => {
-          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
-          if (existingIndex === -1) {
-            newList.push(lgu);
-          } else {
-            newList[existingIndex] = {
-              ...newList[existingIndex],
-              monthlyStatus: {
-                ...newList[existingIndex].monthlyStatus,
-                ...lgu.monthlyStatus
-              }
-            };
-          }
-        });
-        return newList;
-      });
-    }).catch(error => {
-      console.error('Error fetching BP data:', error);
-    });
-  }
+  const fetchAllData = async () => {
+    setIsLoading(true);
+    try {
+      const requests = Object.entries(API_ENDPOINTS).map(([type, endpoint]) => 
+        fetchData(endpoint, type)
+      );
 
-  function GetBC() {
-    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input', {
-      headers: {
-        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
-      },
-    }).then((response) => {
-      const rawData = response.data.values;
-      const transformedData = transformLGUData(rawData, 'BC');
-      setLguList(prevList => {
-        const newList = [...prevList];
-        transformedData.forEach(lgu => {
-          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
-          if (existingIndex === -1) {
-            newList.push(lgu);
-          } else {
-            newList[existingIndex] = {
-              ...newList[existingIndex],
-              monthlyStatus: {
-                ...newList[existingIndex].monthlyStatus,
-                ...lgu.monthlyStatus
-              }
-            };
-          }
-        });
-        return newList;
-      });
-    }).catch(error => {
-      console.error('Error fetching BC data:', error);
-    });
-  }
-  function GetWP() {
-    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input', {
-      headers: {
-        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
-      },
-    }).then((response) => {
-      const rawData = response.data.values;
-      const transformedData = transformLGUData(rawData, 'WP');
-      setLguList(prevList => {
-        const newList = [...prevList];
-        transformedData.forEach(lgu => {
-          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
-          if (existingIndex === -1) {
-            newList.push(lgu);
-          } else {
-            newList[existingIndex] = {
-              ...newList[existingIndex],
-              monthlyStatus: {
-                ...newList[existingIndex].monthlyStatus,
-                ...lgu.monthlyStatus
-              }
-            };
-          }
-        });
-        return newList;
-      });
-    }).catch(error => {
-      console.error('Error fetching WP data:', error);
-    });
-  }
-  function GetCO() {
-    axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BPCO UR Input', {
-      headers: {
-        Authorization: `Token ${import.meta.env.VITE_TOKEN}`,
-      },
-    }).then((response) => {
-      const rawData = response.data.values;
-      const transformedData = transformLGUData(rawData, 'CO');
-      setLguList(prevList => {
-        const newList = [...prevList];
-        transformedData.forEach(lgu => {
-          const existingIndex = newList.findIndex(existing => existing.geocode === lgu.geocode);
-          if (existingIndex === -1) {
-            newList.push(lgu);
-          } else {
-            newList[existingIndex] = {
-              ...newList[existingIndex],
-              monthlyStatus: {
-                ...newList[existingIndex].monthlyStatus,
-                ...lgu.monthlyStatus
-              }
-            };
-          }
-        });
-        return newList;
-      });
-    }).catch(error => {
-      console.error('Error fetching CO data:', error);
-    });
-  }
+      const results = await Promise.all(requests);
+      
+      // Merge all results efficiently
+      const mergedData = results.flat().reduce((acc, curr) => {
+        const existingIndex = acc.findIndex((item:any) => item.geocode === curr.geocode);
+        if (existingIndex === -1) {
+          acc.push(curr);
+        } else {
+          acc[existingIndex].monthlyStatus = {
+            ...acc[existingIndex].monthlyStatus,
+            ...curr.monthlyStatus
+          };
+        }
+        return acc;
+      }, [] as LGUData[]);
+
+      setLguList(mergedData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setLguList([]);
-    setSelectedLGU(selectedLGU); // Reset selectedLGU when services change
-    if (services.includes("Working Permit")) {
-      GetWP();
-    }
-    if (services.includes("Building Permit")) {
-      GetBP();
-    }
-    if (services.includes("Certificate of Occupancy")) {
-      GetCO();
-    }
-    if (services.includes("Barangay Clearance")) {
-      GetBC();
-    }
-    
-  }, [services]);
+    const abortController = new AbortController();
+    fetchAllData();
+    return () => abortController.abort();
+  }, []);
 
   useEffect(() => {
     if (selectedLGU && lguList.length > 0) {
@@ -318,6 +226,16 @@ const LGU: React.FC = () => {
     }
   };
 
+  const LoadingSkeleton = () => (
+    <tr>
+      <td colSpan={2} className="py-3 px-4 border border-border">
+        <div className="animate-pulse flex space-x-4">
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+        </div>
+      </td>
+    </tr>
+  );
+
   return (
     <div className="w-full h-full px-5 flex flex-col items-center gap-10">
       <div className="bg-[#EBEFF5] border border-border flex flex-col px-10 py-4 rounded w-[80%] relative">
@@ -355,38 +273,53 @@ const LGU: React.FC = () => {
       <div className="mt-6 w-[60%] self-center flex rounded-md bg-white border border-border">
         <table className="w-full text-left rounded-2xl overflow-hidden border border-border">
           <tbody>
-            <tr>
-              <th className="py-2 w-[40%] px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Geocode</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.geocode || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Name</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.lguFullName || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Province</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.province || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Region</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.region || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">District</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.district || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Level</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.level || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Income Class</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.incomeClass || "-"}</td>
-            </tr>
-            <tr>
-              <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Utilization Status</th>
-              <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.monthlyStatus|| "-"}</td>
-            </tr>
+            {isLoading ? (
+              <>
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+              </>
+            ) : (
+              <>
+                <tr>
+                  <th className="py-2 w-[40%] px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Geocode</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.geocode || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Name</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.lguFullName || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Province</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.province || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Region</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.region || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">District</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.district || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Level</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.level || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Income Class</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.incomeClass || "-"}</td>
+                </tr>
+                <tr>
+                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Utilization Status</th>
+                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.monthlyStatus|| "-"}</td>
+                </tr>
+              </>
+            )}
           </tbody>
         </table>
       </div>

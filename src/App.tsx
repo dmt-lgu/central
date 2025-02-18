@@ -1,16 +1,20 @@
-import { ThemeProvider } from "@/components/theme-provider"
-import { useState, useEffect } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { useState, useEffect, useRef } from "react";
 import viteLogo from "/DICT.png";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ListFilter } from "lucide-react";
 import LGUServiceDropdown from "./screens/centralOffice/testing/ServicesList";
 import DataPresentationOptions from "./screens/centralOffice/testing/DataPresentationOptions";
 import Profile from "./assets/Layer_1@2x.png";
-import APIs from "./screens/index.json"
+import APIs from "./screens/index.json";
 import axios from "./plugin/axios";
-import { useSelector} from 'react-redux';
-import {selectRegions} from './redux/regionSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectRegions } from './redux/regionSlice';
 import { selectProject } from "./redux/projectSlice";
+import { selectData } from "./redux/dataSlice";
+import { setData } from "./redux/dataSlice";
+import { selectDate } from "./redux/dateSlice";
+import { useReactToPrint } from 'react-to-print';
 
 interface RegionData {
   region: string;
@@ -60,12 +64,15 @@ interface MonthlyData {
 }
 
 function App() {
-
   const regionss = useSelector(selectRegions);
   const services = useSelector(selectProject);
+  const dates = useSelector(selectDate);
+  const [filteredStats, setFilteredStats] = useState<MonthlyData>({});
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  
+  const componentRef = useRef<HTMLDivElement>(null);
+
   const menuItems = [
     { name: "Reports", path: "/central/reports" },
     { name: "Utilization Status", path: "/central/utilization" },
@@ -74,6 +81,88 @@ function App() {
 
   const [monthlyStats, setMonthlyStats] = useState<MonthlyData>({});
 
+  const filterMonthlyStatsByDates = (stats: MonthlyData, selectedDates: string[]) => {
+    if (!selectedDates?.length || !stats) {
+      console.log('No dates or stats to filter');
+      return stats;
+    }
+
+    const sortedDates = [...selectedDates].sort();
+    const startDate = sortedDates[0];
+    const endDate = sortedDates[sortedDates.length - 1];
+    
+    const [startYear, startMonth] = startDate.split('-').map(Number);
+    const [endYear, endMonth] = endDate.split('-').map(Number);
+
+    const months: string[] = [];
+    let currentDate = new Date(startYear, startMonth - 1);
+    const endDateTime = new Date(endYear, endMonth - 1);
+
+    while (currentDate <= endDateTime) {
+      months.push(
+        `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`
+      );
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+
+    const filtered: any = {};
+    
+    Object.entries(stats).forEach(([service, data]) => {
+      if (!data) return;
+      
+      filtered[service] = data
+        .filter((monthData: any) => months.includes(monthData.date))
+        .map((monthData: any) => {
+          const regionCounts: any = {};
+
+          // Count universal statuses by dictRo
+          monthData.values.forEach((item: any) => {
+            if (!regionCounts[item.dictRo]) {
+              regionCounts[item.dictRo] = {
+                operational: 0,
+                developmental: 0,
+                training: 0,
+                withdraw: 0
+              };
+            }
+
+            switch (item.universalStatus) {
+              case '[A] Operational':
+                regionCounts[item.dictRo].operational++;
+                break;
+              case '[B] Developmental':
+                regionCounts[item.dictRo].developmental++;
+                break;
+              case '[C] For Training/Others':
+                regionCounts[item.dictRo].training++;
+                break;
+              case '[D] Withdraw':
+                regionCounts[item.dictRo].withdraw++;
+                break;
+            }
+          });
+
+          return {
+            date: monthData.date,
+            data: Object.entries(regionCounts).map(([region, counts]: any) => ({
+              region,
+              ...counts
+            }))
+          };
+        })
+        .sort((a: any, b: any) => a.date.localeCompare(b.date));
+    });
+
+    return filtered;
+  };
+
+  useEffect(() => {
+    if (dates && dates.length > 0 && monthlyStats) {
+      const filtered = filterMonthlyStatsByDates(monthlyStats, dates);
+      dispatch(setData(filtered));
+      console.log('Filtered Monthly Stats:', filtered); 
+    }
+  }, [monthlyStats, dates]);
  
   function getBP() {
     axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input', {
@@ -82,12 +171,10 @@ function App() {
       }
     }).then((response) => {
       const data = response.data.values;
-      // Skip first 3 rows as they are headers
       const records = data.slice(3);
       
-      // Group by period (YYYY-MM)
       const groupedByMonth = records.reduce((acc: any, row: any) => {
-        const period = row[1]; // period is in column index 1 (2024-01)
+        const period = row[1];
         
         const lguDetails = {
           id: row[0],
@@ -120,14 +207,11 @@ function App() {
         return acc;
       }, {});
   
-      // Convert to array format
-      const result:any = Object.values(groupedByMonth);
+      const result: any = Object.values(groupedByMonth);
       setMonthlyStats(prevStats => ({
         ...prevStats,
         BP: result
       }));
-      
-      
     });
   }
 
@@ -138,12 +222,10 @@ function App() {
       }
     }).then((response) => {
       const data = response.data.values;
-      // Skip first 3 rows as they are headers
       const records = data.slice(3);
       
-      // Group by period (YYYY-MM)
       const groupedByMonth = records.reduce((acc: any, row: any) => {
-        const period = row[1]; // period is in column index 1 (2024-01)
+        const period = row[1];
         
         const lguDetails = {
           id: row[0],
@@ -160,9 +242,9 @@ function App() {
           province: row[14],
           region: row[15],
           district: row[16],
-          level: row[17],
-          incomeClass: row[18],
-          dictRo: row[19]
+          level: row[16],
+          incomeClass: row[17],
+          dictRo: row[18]
         };
   
         if (!acc[period]) {
@@ -176,16 +258,12 @@ function App() {
         return acc;
       }, {});
   
-      // Convert to array format
-      const result:any = Object.values(groupedByMonth);
+      const result: any = Object.values(groupedByMonth);
       setMonthlyStats(prevStats => ({
         ...prevStats,
         CO: result
       }));
-      
-      
     });
-
   }
 
   function getWP() {
@@ -195,12 +273,10 @@ function App() {
       }
     }).then((response) => {
       const data = response.data.values;
-      // Skip first 3 rows as they are headers
       const records = data.slice(3);
       
-      // Group by period (YYYY-MM)
       const groupedByMonth = records.reduce((acc: any, row: any) => {
-        const period = row[1]; // period is in column index 1 (2024-01)
+        const period = row[1];
         
         const lguDetails = {
           id: row[0],
@@ -217,9 +293,9 @@ function App() {
           province: row[14],
           region: row[15],
           district: row[16],
-          level: row[17],
-          incomeClass: row[18],
-          dictRo: row[19]
+          level: row[16],
+          incomeClass: row[17],
+          dictRo: row[18]
         };
   
         if (!acc[period]) {
@@ -233,17 +309,14 @@ function App() {
         return acc;
       }, {});
   
-      // Convert to array format
-      const result:any = Object.values(groupedByMonth);
+      const result: any = Object.values(groupedByMonth);
       setMonthlyStats(prevStats => ({
         ...prevStats,
         WP: result
       }));
-      
-      
     });
-
   }
+
   function getBC() {
     axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input', {
       headers: {
@@ -251,12 +324,10 @@ function App() {
       }
     }).then((response) => {
       const data = response.data.values;
-      // Skip first 3 rows as they are headers
       const records = data.slice(3);
       
-      // Group by period (YYYY-MM)
       const groupedByMonth = records.reduce((acc: any, row: any) => {
-        const period = row[1]; // period is in column index 1 (2024-01)
+        const period = row[1];
         
         const lguDetails = {
           id: row[0],
@@ -273,9 +344,9 @@ function App() {
           province: row[14],
           region: row[15],
           district: row[16],
-          level: row[17],
-          incomeClass: row[18],
-          dictRo: row[19]
+          level: row[16],
+          incomeClass: row[17],
+          dictRo: row[18]
         };
   
         if (!acc[period]) {
@@ -289,41 +360,42 @@ function App() {
         return acc;
       }, {});
   
-      // Convert to array format
-      const result:any = Object.values(groupedByMonth);
+      const result: any = Object.values(groupedByMonth);
       setMonthlyStats(prevStats => ({
         ...prevStats,
         BC: result
       }));
-      
-      
     });
-
   }
-  useEffect(() => {
-    console.log(monthlyStats);
-  }, [monthlyStats]);
 
   useEffect(() => {
-    // getBP();
-    // getCO();
-    // getWP()
-    // getBC();
+    setMonthlyStats({});
     
-  }, []);
+    if (services.includes('Building Permit')) {
+      getBP();
+    }
+    if (services.includes('Certificate of Occupancy')) {
+      getCO();
+    }
+    if (services.includes('Working Permit')) {
+      getWP();
+    }
+    if (services.includes('Barangay Clearance')) {
+      getBC();
+    }
+  
+    console.log('Selected services:', services);
+  }, [services]);
 
-  // Initialize activeItem from localStorage or based on current path
   const [activeItem, setActiveItem] = useState(() => {
     const savedItem = localStorage.getItem('activeMenuItem');
     if (savedItem) return savedItem;
     
-    // If no saved item, determine from current path
     const currentPath = location.pathname;
     const matchingItem = menuItems.find(item => currentPath.includes(item.path.split('/').pop() || ''));
     return matchingItem ? matchingItem.name : "Reports";
   });
 
-  // Update activeItem when location changes
   useEffect(() => {
     const currentPath = location.pathname;
     const matchingItem = menuItems.find(item => currentPath.includes(item.path.split('/').pop() || ''));
@@ -338,6 +410,8 @@ function App() {
     localStorage.setItem('activeMenuItem', item);
     navigate(path);
   };
+
+ 
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -354,7 +428,7 @@ function App() {
           <DataPresentationOptions/>
         </nav>
 
-        <div className="flex-1 ml-[20vw] md:ml-0">
+        <div className="flex-1 ml-[20vw] md:ml-0" ref={componentRef}>
           <header className="sticky top-0 z-50 md:hidden bg-white/20 backdrop-blur-md h-[100px] w-full px-20 flex items-center justify-between text-[#6B6B6B]">
             <ul className="flex gap-10">
               {menuItems.map((item) => (
@@ -378,9 +452,10 @@ function App() {
             </div>
           </header>
 
-          <main className="w-full">
+          <main className="w-full" >
             <Outlet />
           </main>
+          
         </div>
       </div>
     </ThemeProvider>

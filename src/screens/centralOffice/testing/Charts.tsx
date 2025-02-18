@@ -1,35 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Chart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { useSelector } from 'react-redux';
 import { selectCharts } from './../../../redux/chartSlice';
+import { selectData } from '@/redux/dataSlice';
+import { useReactToPrint } from 'react-to-print';
 
 const ChartsDashboard: React.FC = () => {
   const charts = useSelector(selectCharts);
+  const data = useSelector(selectData);
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   const [selectedMetric, setSelectedMetric] = useState<'Operational' | 'Developmental'>('Operational');
 
   useEffect(() => {
     console.log(charts);
   }, [charts]);
 
+  const regions = [
+    'BARMM I', 'BARMM II', 'CAR', 'R1', 'R10', 'R11', 'R12', 'R13', 'R2', 'R3', 'R4A', 'R4B', 'R5', 'R6', 'R7', 'R8', 'R9'
+  ];
+
+  const calculateValues = () => {
+    const operationalValues = Array(regions.length).fill(0);
+    const developmentalValues = Array(regions.length).fill(0);
+
+    Object.values(data).forEach((serviceData: any) => {
+      serviceData.forEach((monthData: any) => {
+        monthData.data.forEach((regionData: any) => {
+          const regionIndex = regions.indexOf(regionData.region);
+          if (regionIndex !== -1) {
+            operationalValues[regionIndex] += regionData.operational;
+            developmentalValues[regionIndex] += regionData.developmental;
+          }
+        });
+      });
+    });
+
+    return [
+      {
+        name: 'Operational',
+        data: operationalValues
+      },
+      {
+        name: 'Developmental',
+        data: developmentalValues
+      }
+    ];
+  };
+
+  const values = calculateValues();
+
   let xaxis = {
-    categories: [
-      'NCR', 'CAR', 'Region I', 'Region II', 'Region III', 'Region IV-A',
-      'Region IV-B', 'Region V', 'Region VI', 'Region VII', 'Region VIII',
-      'Region IX', 'Region X', 'Region XI', 'Region XII', 'Region XIII', 'BARMM'
-    ]
-  }
-  
-  let values = [
-    {
-      name: 'Operational',
-      data: [45, 32, 38, 29, 42, 40, 25, 33, 47, 41, 28, 31, 35, 39, 34, 27, 30]
-    },
-    {
-      name: 'Developmental',
-      data: [35, 25, 28, 22, 32, 30, 18, 24, 29, 31, 20, 23, 26, 30, 25, 19, 22]
-    }
-  ]
+    categories: regions
+  };
 
   // Bar Chart Configuration
   const barChartOptions: ApexOptions = {
@@ -75,11 +103,6 @@ const ChartsDashboard: React.FC = () => {
           fontSize: '12px'
         }
       },
-      scrollable: {
-        enabled: true,
-        offsetX: 0,
-        offsetY: 0
-      }
     },
     yaxis: {
       title: {
@@ -101,7 +124,7 @@ const ChartsDashboard: React.FC = () => {
     },
     colors: ['#1e40af', '#fbbf24'],
     title: {
-      text: 'Operational vs Developmental Metrics',
+      text: 'Operational vs. Developmental Performance Across Regions',
       align: 'left',
     },
     responsive: [{
@@ -150,11 +173,6 @@ const ChartsDashboard: React.FC = () => {
           fontSize: '12px'
         }
       },
-      scrollable: {
-        enabled: true,
-        offsetX: 0,
-        offsetY: 0
-      }
     },
     colors: ['#1e40af', '#fbbf24'],
     legend: {
@@ -178,8 +196,23 @@ const ChartsDashboard: React.FC = () => {
 
   // Get data for pie chart based on selected metric
   const getPieChartData = () => {
-    
-    return [203,192,20,106]
+    let operationalTotal = 0;
+    let developmentalTotal = 0;
+    let trainingTotal = 0;
+    let withdrawTotal = 0;
+
+    Object.values(data).forEach((serviceData: any) => {
+      serviceData.forEach((monthData: any) => {
+        monthData.data.forEach((regionData: any) => {
+          operationalTotal += regionData.operational;
+          developmentalTotal += regionData.developmental;
+          trainingTotal += regionData.training;
+          withdrawTotal += regionData.withdraw;
+        });
+      });
+    });
+
+    return [operationalTotal, developmentalTotal, trainingTotal, withdrawTotal];
   };
 
   // Updated Pie Chart Configuration
@@ -189,17 +222,16 @@ const ChartsDashboard: React.FC = () => {
       height: 350,
     },
     labels: [
-      'Operational','Developmental','For Training/Others','Withdraw'
+      'Operational', 'Developmental', 'For Training/Others', 'Withdraw'
     ],
-    colors:  [ '#0134b2','#f5cf1b','#6fd0f2','#d01028'],
+    colors: ['#0134b2', '#f5cf1b', '#6fd0f2', '#d01028'],
     legend: {
       position: 'right',
       fontSize: '12px',
       height: 230,
-      
     },
     title: {
-      text: `Status Distribution - ${selectedMetric}`,
+      text: `Overall Status Distribution`,
       align: 'left',
     },
   };
@@ -208,37 +240,46 @@ const ChartsDashboard: React.FC = () => {
   const isLineGraphVisible = charts.includes('Line Graph');
   const isPieGraphVisible = charts.includes('Pie Graph');
 
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
-    <div className="p-6 bg-gray-100 min-h-0  w-full">
-      <div className=" flex flex-col gap-10 ">
+    <div className="p-6 bg-gray-100 min-h-0 w-full" ref={componentRef}>
+      <div className="flex flex-col gap-10">
         {isBarGraphVisible && (
           <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
-            <div className=' w-full'>
+            <div className='w-full'>
               <Chart options={barChartOptions} series={barChartSeries} type="bar" height={350} />
+              <p className="text-center mt-2">This bar chart shows the comparison of operational and developmental performance across different regions.</p>
             </div>
           </div>
         )}
 
         {isLineGraphVisible && (
           <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
-            <div className=' w-full'>
+            <div className='w-full'>
               <Chart options={lineChartOptions} series={lineChartSeries} type="line" height={350} />
+              <p className="text-center mt-2">This line chart illustrates the trend analysis of operational and developmental metrics over time.</p>
             </div>
           </div>
         )}
 
         {isPieGraphVisible && (
-          <div className="bg-white rounded-lg className=' w-full' shadow-md p-4">
-          
-            <Chart 
-              options={pieChartOptions} 
-              series={getPieChartData()} 
-              type="pie" 
-              height={350} 
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <Chart
+              options={pieChartOptions}
+              series={getPieChartData()}
+              type="pie"
+              height={350}
             />
+            <p className="text-center mt-2">This pie chart represents the overall distribution of operational, developmental, training, and withdraw statuses.</p>
           </div>
         )}
       </div>
+      <button onClick={handlePrint} className="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-full shadow-lg">
+        Print PDF
+      </button>
     </div>
   );
 };

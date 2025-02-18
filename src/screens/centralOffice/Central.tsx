@@ -23,7 +23,7 @@ function Central() {
   const [selectedRegion, setSelectedRegion] = useState<string[] | null>(null);
   const [selectedValue, setSelectedValue] = useState<any>('');
   const [selectedValue2, setSelectedValue2] = useState<any>('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDates, setSelectedDates] = useState<string[]>(['2024-01']);
  
 
   // Transform state for zoom and pan
@@ -134,9 +134,9 @@ function Central() {
     <>
       <div className="min-h-[100vh] w-full z-10 flex flex-col items-center">
         <div className="w-[90%] flex flex-col gap-10 min-h-[10px]">
-          <div className="w-ful items-center z-[4] md:z-[0] justify-between px-5 flex min-h-[100px] bg-[#ebeff5] border rounded-sm md:flex-col md:py-2 md:gap-3">
-            <div className="flex gap-2 w-[500px] md:w-full">
-              <DatePicker value={selectedDate} onChange={setSelectedDate} />
+          <div className="w-ful items-center gap-5 z-[4] md:z-[0] justify-between px-5 flex min-h-[100px] bg-[#ebeff5] border rounded-sm md:flex-col md:py-2 md:gap-3">
+            <div className="flex gap-2 md:w-full">
+            <DatePicker onDateChange={setSelectedDates} />
             </div>
             <div className="z-[99999] md:z-0 w-[30%] md:w-full">
               <RegionSelector />

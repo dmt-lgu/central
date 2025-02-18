@@ -5,6 +5,8 @@ import { combineReducers } from 'redux';
 import regionReducer from './regionSlice';
 import chartReducer from './chartSlice';
 import projectReducer from './projectSlice';
+import dateReducer from './dateSlice';
+import dataReducer from './dataSlice';
 
 
 
@@ -17,7 +19,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
   region: regionReducer,
   charts:chartReducer,
-  project:projectReducer
+  project:projectReducer,
+  dates: dateReducer,
+  datas: dataReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

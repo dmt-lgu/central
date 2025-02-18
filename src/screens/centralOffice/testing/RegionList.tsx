@@ -37,6 +37,8 @@ const regionsByGroup = {
   mindanao: ['IX', 'X', 'XI', 'XII', 'XIII', 'BARMM']
 };
 
+
+
 const RegionSelector = () => { 
   const regionss = useSelector(selectRegions);
   const [isOpen, setIsOpen] = useState(false);
