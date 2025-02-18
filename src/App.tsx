@@ -152,9 +152,9 @@ function App() {
         <div className="min-h-[100vh] w-full z-10 flex flex-col items-center">
           <div className="w-[90%] flex flex-col gap-10 min-h-[10px] ">
             {/* Menu Button */}
-            <div className="hidden md:grid-cols-2 w-full items-start z-[4] justify-center md:flex px-5 md:mt-5 min-h-[70px] rounded-sm md:flex-col md:gap-3">
+            <div className="hidden md:grid-cols-2 w-full items-start z-[50] justify-center md:flex px-5 md:mt-5 min-h-[70px] rounded-sm md:flex-col md:gap-3">
                 <button
-                  className={`text-accent bg-[#0136a8] p-2 md:fixed z-500 rounded-md shadow-md ${
+                  className={`text-accent bg-[#0136a8] p-2 md:fixed  rounded-md shadow-md ${
                     isMenuOpen ? "hidden" : ""
             }`}
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
