@@ -48,7 +48,7 @@ const DataPresentationOptions = () => {
   return (
     <div className={isOpen ? "relative w-full h-[270px] rounded-[100px]" : "rounded-none relative w-full"}>
       {/* Dropdown Box */}
-      <div className="border-gray-300 outline-none mt-2 border-x-0 border-y-2 rounded-none">
+      <div className="border-gray-300 se:mt-20 md:mt-0 outline-none mt-2 border-x-0 border-y-2 rounded-none">
         {/* Dropdown Button */}
         <button
           onClick={toggleDropdown}
@@ -61,11 +61,11 @@ const DataPresentationOptions = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute w-full text-white border-gray-300 pb-2 pt-2">
+        <div className="absolute w-full  text-white border-gray-300 pb-2 pt-2">
           {presentationOptions.map((option: any, index: any) => (
             <label
               key={index}
-              className="flex items-center px-4 py-2 text-sm cursor-pointer"
+              className="flex items-center px-4 py-2 text-sm cursor-pointer "
             >
               <input
                 type="checkbox"

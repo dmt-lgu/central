@@ -87,7 +87,7 @@ function LineCharts() {
           text: 'Certificate of Occupancy',
           align: 'left',
           style: {
-            fontSize: '12px' 
+            chartHeight: '100px',
           }
         },
         colors: ['#0136A8', '#F8CD1C', '#CE1126', '#72CFF1'],
@@ -96,7 +96,7 @@ function LineCharts() {
         }
       };
   return (
-    <div className='grid grid-cols-2 gap-4 w-full md:grid-cols-1'>
+    <div className='grid grid-cols-2 gap-4 w-full md:grid-cols-1 '>
         <div className='bg-white rounded-lg border shadow-md p-3'>
             <Chart options={optionsOperational} series={combinedSeries} type="line" />
         </div>

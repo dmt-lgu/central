@@ -50,7 +50,7 @@ const LGUServiceDropdown = () => {
       </div>
 
       {isOpen && (
-        <div className="absolute w-full outline-none text-white pb-2 pt-2">
+        <div className="absolute w-full outline-none  text-white pb-2 pt-2">
           {services.map((service, index) => (
             <label
               key={index}

@@ -32,11 +32,12 @@ function App() {
   const [showScroll, setShowScroll] = useState(false);
   
   const menuItems = [
-    { name: "LGU", path: "/central/lgu" },
     { name: "Reports", path: "/central/reports" },
-    { name: "Utilization Status", path: "/central/utilization" }
+    { name: "Utilization Status", path: "/central/utilization" },
+    { name: "LGU", path: "/central/lgu" },
   ];
-
+  
+  
   const [monthlyStats, setMonthlyStats] = useState<MonthlyData[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
  
@@ -149,9 +150,9 @@ function App() {
           <DataPresentationOptions/>
         </nav>
         <div className="min-h-[100vh] w-full z-10 flex flex-col items-center">
-          <div className="w-[90%] flex flex-col gap-10 min-h-[10px]">
+          <div className="w-[90%] flex flex-col gap-10 min-h-[10px] ">
             {/* Menu Button */}
-            <div className="hidden md:grid-cols-2 w-full items-start z-[4] justify-center md:flex px-5 md:mt-5 min-h-[70px] bg-[#ebeff5] border rounded-sm md:flex-col md:gap-3">
+            <div className="hidden md:grid-cols-2 w-full items-start z-[4] justify-center md:flex px-5 md:mt-5 min-h-[70px] rounded-sm md:flex-col md:gap-3">
                 <button
                   className={`text-accent bg-[#0136a8] p-2 md:fixed z-500 rounded-md shadow-md ${
                     isMenuOpen ? "hidden" : ""
@@ -161,44 +162,44 @@ function App() {
                   <MenuIcon />
                 </button>
 
-                <div className="flex gap-2 items-center md:ml-28 md:fixed ">
-                  <div className="font-gsemibold ">Welcome, (Ryan Gwapo)</div>
-                  <img className="rounded-full w-10 h-10" src={Profile} alt="" />
+                <div className="flex gap-2 items-center md:ml-28 md:fixed md:hidden">
+                  <div className="font-gsemibold md:text-xs">Welcome, (Ryan Gwapo)</div>
+                  <img className="rounded-full w-10 h-10 md:mr-5" src={Profile} alt="" />
                 </div>
 
               </div>
 
                 {/* Sidebar Navigation - Visible when menu is open */}
                 {isMenuOpen && (
-                <nav className="fixed top-0 left-0 md:w-72 h-screen bg-[#0136a8] z-[99999] flex flex-col items-start p-5">
-                  {/* Close Button */}
-                  <button
-                    className="absolute top-4 left-60 text-white"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <X className='bg-red-600 rounded-sm' size={32}/>
-                  </button>
+                  <nav className="fixed top-0 md:overflow-auto md:h-full left-0 md:w-64 h-screen bg-[#0136a8] z-[99999] flex flex-col items-start p-5">
+                    {/* Close Button */}
+                    <button
+                      className="absolute top-4 left-52 text-white"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <X className='bg-red-600 rounded-sm' size={32}/>
+                    </button>
 
-                  <Link className="flex w-full mr-5 gap-2" to="/central/">
-                    <img
-                      src={viteLogo}
-                      className="logo h-20 object-contain self-center"
-                      alt="DICT logo"
-                    />
-                  </Link>
+                    <Link className="flex w-full mr-5 gap-2" to="/central/">
+                      <img
+                        src={viteLogo}
+                        className="logo h-20 object-contain self-center"
+                        alt="DICT logo"
+                      />
+                    </Link>
 
-                  <h1 className="text-white font-gmedium text-xl mt-10">
-                    DATA DASHBOARD
-                  </h1>
+                    <h1 className="text-white font-gmedium text-xl mt-10">
+                      DATA DASHBOARD
+                    </h1>
 
-                  <div className="text-white flex gap-1 font-gmedium mt-4">
-                    <ListFilter /> Filter
-                  </div>
+                    <div className="text-white flex gap-1 font-gmedium mt-4">
+                      <ListFilter /> Filter
+                    </div>
 
-                  <LGUServiceDropdown />
-                  <DataPresentationOptions />
-                </nav>
-              )}
+                    <LGUServiceDropdown />
+                    <DataPresentationOptions />
+                  </nav>
+                )}
 
               {isMenuOpen && (
                 <div
@@ -211,7 +212,7 @@ function App() {
               <div className="flex-1 ml-[20vw] md:ml-0 ">
               <header className="md:fixed md:mt-24 sticky top-0 z-20 bg-white/20 backdrop-blur-md h-[100px] w-full px-20 md:px-5 flex items-center justify-between text-[#6B6B6B]">
                 <ul className="flex gap-10 md:text-base md:gap-5">
-                  {menuItems.sort((a, b) => a.name.localeCompare(b.name)).map((item) => (
+                  {menuItems.map((item) => (
                     <li
                       key={item.name}
                       onClick={() => handleMenuClick(item.name, item.path)}
@@ -225,7 +226,6 @@ function App() {
                     </li>
                   ))}
                 </ul>
-
                 <div className="flex gap-2 items-center md:hidden ">
                   <img className="rounded-full w-10 h-10 " src={Profile} alt="" />
                   <div className="font-gsemibold ">Welcome, (Nico Gwapo)</div>
