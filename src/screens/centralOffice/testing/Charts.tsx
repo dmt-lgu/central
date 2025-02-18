@@ -4,11 +4,17 @@ import { ApexOptions } from 'apexcharts';
 import { useSelector } from 'react-redux';
 import { selectCharts } from './../../../redux/chartSlice';
 import { selectData } from '@/redux/dataSlice';
+import { selectProject } from '@/redux/projectSlice';
+
 import { useReactToPrint } from 'react-to-print';
+import { selectDate } from '@/redux/dateSlice';
 
 const ChartsDashboard: React.FC = () => {
   const charts = useSelector(selectCharts);
   const data = useSelector(selectData);
+  const date = useSelector(selectDate);
+  
+  const project = useSelector(selectProject);
   const componentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -127,6 +133,10 @@ const ChartsDashboard: React.FC = () => {
       text: 'Operational vs. Developmental Performance Across Regions',
       align: 'left',
     },
+    subtitle: {
+      text: 'This bar chart shows the comparison of operational and developmental performance across different regions.',
+      align: 'left',
+    },
     responsive: [{
       breakpoint: 1000,
       options: {
@@ -182,6 +192,7 @@ const ChartsDashboard: React.FC = () => {
       text: 'Trend Analysis',
       align: 'left',
     },
+    
     responsive: [{
       breakpoint: 1000,
       options: {
@@ -234,6 +245,7 @@ const ChartsDashboard: React.FC = () => {
       text: `Overall Status Distribution`,
       align: 'left',
     },
+    
   };
 
   const isBarGraphVisible = charts.includes('Bar Graph');
@@ -244,6 +256,16 @@ const ChartsDashboard: React.FC = () => {
     content: () => componentRef.current,
   });
 
+  const formatProjectList = (projects: string[]) => {
+    if (projects.length <= 1) return projects.join('');
+    return `${projects.slice(0, -1).join(', ')}, and ${projects.slice(-1)}`;
+  };
+
+  const formatDateRange = (dates: string[]) => {
+    if (dates.length <= 1) return dates.join('');
+    return `${dates[0]} - ${dates[dates.length - 1]}`;
+  };
+
   return (
     <div className="p-6 bg-gray-100 min-h-0 w-full" ref={componentRef}>
       <div className="flex flex-col gap-10">
@@ -251,8 +273,12 @@ const ChartsDashboard: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
             <div className='w-full'>
               <Chart options={barChartOptions} series={barChartSeries} type="bar" height={350} />
-              <p className="text-center mt-2">This bar chart shows the comparison of operational and developmental performance across different regions.</p>
             </div>
+            <p className=' text-sm'>{`This bar chart compares operational and developmental performance across regions for  `}
+              <span className=' font-gbold'>{`${formatProjectList(project)} `}</span>
+              from
+              <span className=' font-gbold'>{` ${formatDateRange(date)}. `}</span>
+              </p>
           </div>
         )}
 
@@ -260,8 +286,12 @@ const ChartsDashboard: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
             <div className='w-full'>
               <Chart options={lineChartOptions} series={lineChartSeries} type="line" height={350} />
-              <p className="text-center mt-2">This line chart illustrates the trend analysis of operational and developmental metrics over time.</p>
             </div>
+            <p className=' text-sm'>{`Trend analysis of operational and developmental metrics over time across `}
+              <span className=' font-gbold'>{`${formatProjectList(project)} `}</span>
+              from
+              <span className=' font-gbold'>{` ${formatDateRange(date)}. `}</span>
+              </p>
           </div>
         )}
 
@@ -273,13 +303,18 @@ const ChartsDashboard: React.FC = () => {
               type="pie"
               height={350}
             />
-            <p className="text-center mt-2">This pie chart represents the overall distribution of operational, developmental, training, and withdraw statuses.</p>
+            <p className=' text-sm'>{`Overall distribution of operational, developmental, training, and withdrawal statuses across `}
+              <span className=' font-gbold'>{`${formatProjectList(project)}  `}</span>combined from
+
+              <span className=' font-gbold'>{` ${formatDateRange(date)}. `}</span>
+              </p>
           </div>
         )}
       </div>
       <button onClick={handlePrint} className="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-full shadow-lg">
         Print PDF
       </button>
+    
     </div>
   );
 };
