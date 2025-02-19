@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useSelector } from 'react-redux';
 import { selectData } from '@/redux/dataSlice';
@@ -14,14 +14,14 @@ function TableStatus() {
 
   useEffect(() => {
     const calculateTotals = () => {
-      const totals = {
+      const totals:any = {
         WP: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
         CO: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
         BP: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
         BC: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
       };
 
-      Object.entries(data).forEach(([permitType, permitData]) => {
+      Object.entries(data).forEach(([permitType, permitData]:any) => {
         permitData.forEach((monthData: any) => {
           monthData.data.forEach((regionData: any) => {
             totals[permitType].operational += regionData.operational;

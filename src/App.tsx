@@ -6,7 +6,6 @@ import { ListFilter } from "lucide-react";
 import LGUServiceDropdown from "./screens/centralOffice/testing/ServicesList";
 import DataPresentationOptions from "./screens/centralOffice/testing/DataPresentationOptions";
 import Profile from "./assets/Layer_1@2x.png";
-import APIs from "./screens/index.json";
 import axios from "./plugin/axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectRegions } from './redux/regionSlice';
@@ -81,7 +80,7 @@ function App() {
 
   const [monthlyStats, setMonthlyStats] = useState<MonthlyData>({});
 
-  const filterMonthlyStatsByDates = (stats: MonthlyData, selectedDates: string[]) => {
+  const filterMonthlyStatsByDates = (stats: MonthlyData, selectedDates: string[], selectedRegions: string[]) => {
     if (!selectedDates?.length || !stats) {
       console.log('No dates or stats to filter');
       return stats;
@@ -117,28 +116,30 @@ function App() {
 
           // Count universal statuses by dictRo
           monthData.values.forEach((item: any) => {
-            if (!regionCounts[item.dictRo]) {
-              regionCounts[item.dictRo] = {
-                operational: 0,
-                developmental: 0,
-                training: 0,
-                withdraw: 0
-              };
-            }
+            if (selectedRegions.includes(item.dictRo)) {
+              if (!regionCounts[item.dictRo]) {
+                regionCounts[item.dictRo] = {
+                  operational: 0,
+                  developmental: 0,
+                  training: 0,
+                  withdraw: 0
+                };
+              }
 
-            switch (item.universalStatus) {
-              case '[A] Operational':
-                regionCounts[item.dictRo].operational++;
-                break;
-              case '[B] Developmental':
-                regionCounts[item.dictRo].developmental++;
-                break;
-              case '[C] For Training/Others':
-                regionCounts[item.dictRo].training++;
-                break;
-              case '[D] Withdraw':
-                regionCounts[item.dictRo].withdraw++;
-                break;
+              switch (item.universalStatus) {
+                case '[A] Operational':
+                  regionCounts[item.dictRo].operational++;
+                  break;
+                case '[B] Developmental':
+                  regionCounts[item.dictRo].developmental++;
+                  break;
+                case '[C] For Training/Others':
+                  regionCounts[item.dictRo].training++;
+                  break;
+                case '[D] Withdraw':
+                  regionCounts[item.dictRo].withdraw++;
+                  break;
+              }
             }
           });
 
@@ -158,11 +159,11 @@ function App() {
 
   useEffect(() => {
     if (dates && dates.length > 0 && monthlyStats) {
-      const filtered = filterMonthlyStatsByDates(monthlyStats, dates);
+      const filtered = filterMonthlyStatsByDates(monthlyStats, dates, regionss);
       dispatch(setData(filtered));
       console.log('Filtered Monthly Stats:', filtered); 
     }
-  }, [monthlyStats, dates]);
+  }, [monthlyStats, dates, regionss]);
  
   function getBP() {
     axios.get('18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input', {

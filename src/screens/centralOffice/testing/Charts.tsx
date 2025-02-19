@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Chart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { useSelector } from 'react-redux';
@@ -8,12 +8,14 @@ import { selectProject } from '@/redux/projectSlice';
 
 import { useReactToPrint } from 'react-to-print';
 import { selectDate } from '@/redux/dateSlice';
+import { selectRegions } from '@/redux/regionSlice';
 
 const ChartsDashboard: React.FC = () => {
   const charts = useSelector(selectCharts);
   const data = useSelector(selectData);
   const date = useSelector(selectDate);
-  
+  const regionss = useSelector(selectRegions);
+
   const project = useSelector(selectProject);
   const componentRef = useRef<HTMLDivElement>(null);
 
@@ -21,15 +23,22 @@ const ChartsDashboard: React.FC = () => {
     console.log(data);
   }, [data]);
 
-  const [selectedMetric, setSelectedMetric] = useState<'Operational' | 'Developmental'>('Operational');
 
   useEffect(() => {
     console.log(charts);
   }, [charts]);
 
-  const regions = [
-    'BARMM I', 'BARMM II', 'CAR', 'R1', 'R10', 'R11', 'R12', 'R13', 'R2', 'R3', 'R4A', 'R4B', 'R5', 'R6', 'R7', 'R8', 'R9'
-  ];
+  const regions = Object.keys(data).reduce((acc: string[], serviceKey: string) => {
+    const serviceData = data[serviceKey];
+    serviceData.forEach((monthData: any) => {
+      monthData.data.forEach((regionData: any) => {
+        if (!acc.includes(regionData.region)) {
+          acc.push(regionData.region);
+        }
+      });
+    });
+    return acc;
+  }, []);
 
   const calculateValues = () => {
     const operationalValues = Array(regions.length).fill(0);
@@ -131,10 +140,6 @@ const ChartsDashboard: React.FC = () => {
     colors: ['#1e40af', '#fbbf24'],
     title: {
       text: 'Operational vs. Developmental Performance Across Regions',
-      align: 'left',
-    },
-    subtitle: {
-      text: 'This bar chart shows the comparison of operational and developmental performance across different regions.',
       align: 'left',
     },
     responsive: [{
@@ -274,7 +279,7 @@ const ChartsDashboard: React.FC = () => {
             <div className='w-full'>
               <Chart options={barChartOptions} series={barChartSeries} type="bar" height={350} />
             </div>
-            <p className=' text-sm'>{`This bar chart compares operational and developmental performance across regions for  `}
+            <p className=' text-sm'>{`This bar chart compares operational and developmental performance across ${formatProjectList(regionss)} for  `}
               <span className=' font-gbold'>{`${formatProjectList(project)} `}</span>
               from
               <span className=' font-gbold'>{` ${formatDateRange(date)}. `}</span>
@@ -303,7 +308,7 @@ const ChartsDashboard: React.FC = () => {
               type="pie"
               height={350}
             />
-            <p className=' text-sm'>{`Overall distribution of operational, developmental, training, and withdrawal statuses across `}
+            <p className=' text-sm'>{`Overall distribution of operational, developmental, training, and withdrawal statuses across ${formatProjectList(regionss)} for `}
               <span className=' font-gbold'>{`${formatProjectList(project)}  `}</span>combined from
 
               <span className=' font-gbold'>{` ${formatDateRange(date)}. `}</span>

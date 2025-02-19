@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setRegions,selectRegions } from './../../../redux/regionSlice';
+import { setRegions, selectRegions } from './../../../redux/regionSlice';
 import { AppDispatch } from './../../../redux/store';
+
 const groupOfIslands = [
   { id: 'luzon', name: 'Luzon' },
   { id: 'visayas', name: 'Visayas' },
@@ -10,45 +11,39 @@ const groupOfIslands = [
 ];
 
 const regions = [
-  { id: 'I', name: 'I' },
-  { id: 'II', name: 'II' },
-  { id: 'III', name: 'III' },
-  { id: 'IV-A', name: 'IV-A' },
-  { id: 'IV-B', name: 'IV-B' },
-
-  
-  { id: 'V', name: 'V' },
+  { id: 'BARMM I', name: 'BARMM I' },
+  { id: 'BARMM II', name: 'BARMM II' },
   { id: 'CAR', name: 'CAR' },
+  { id: 'R1', name: 'R1' },
+  { id: 'R10', name: 'R10' },
+  { id: 'R11', name: 'R11' },
+  { id: 'R12', name: 'R12' },
+  { id: 'R13', name: 'R13' },
+  { id: 'R2', name: 'R2' },
+  { id: 'R3', name: 'R3' },
+  { id: 'R4A', name: 'R4A' },
+  { id: 'R4B', name: 'R4B' },
+  { id: 'R5', name: 'R5' },
+  { id: 'R6', name: 'R6' },
+  { id: 'R7', name: 'R7' },
+  { id: 'R8', name: 'R8' },
+  { id: 'R9', name: 'R9' },
   { id: 'NCR', name: 'NCR' },
-  { id: 'VI', name: 'VI' },
-  { id: 'VII', name: 'VII' },
-  { id: 'VIII', name: 'VIII' },
-  { id: 'IX', name: 'IX' },
-  { id: 'X', name: 'X' },
-  { id: 'XI', name: 'XI' },
-  { id: 'XII', name: 'XII' },
-  { id: 'XIII', name: 'XIII' },
-  { id: 'BARMM', name: 'BARMM' },
 ];
 
 const regionsByGroup = {
-  luzon: ['I', 'II', 'III', 'IV-A', 'V', 'CAR', 'NCR','IV-B'],
-  visayas: ['VI', 'VII', 'VIII', 'NIR'],
-  mindanao: ['IX', 'X', 'XI', 'XII', 'XIII', 'BARMM']
+  luzon: ['R1', 'R2', 'R3', 'R4A', 'R4B', 'R5', 'CAR', 'NCR'],
+  visayas: ['R6', 'R7', 'R8'],
+  mindanao: ['R9', 'R10', 'R11', 'R12', 'R13', 'BARMM I', 'BARMM II']
 };
 
-
-
-const RegionSelector = () => { 
+const RegionSelector = () => {
   const regionss = useSelector(selectRegions);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRegions, setSelectedRegions] = useState<string[]>(regionss);
   const [selectedIslands, setSelectedIslands] = useState<string[]>([]);
 
-
- 
   const dispatch: AppDispatch = useDispatch();
-
 
   const handleRegionChange = (regionId: string) => {
     setSelectedRegions(prev =>
@@ -57,8 +52,6 @@ const RegionSelector = () => {
         : [...prev, regionId]
     );
   };
-
-
 
   const handleIslandChange = (islandId: string) => {
     const regionsInGroup = regionsByGroup[islandId as keyof typeof regionsByGroup];
@@ -83,15 +76,15 @@ const RegionSelector = () => {
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(setRegions(selectedRegions));
-  },[selectedRegions])
+  }, [selectedRegions]);
 
   return (
     <div className="relative w-full inline-block text-left">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex w-full justify-between items-center  px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="inline-flex w-full justify-between items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       >
         Select Region
         <ChevronDown className="w-4 h-4 ml-2" />
@@ -102,7 +95,7 @@ const RegionSelector = () => {
           <div className="p-4">
             <div className="mb-4">
               <h3 className="text-sm font-gmedium text-blue-600 mb-2">Group of Islands</h3>
-              <div className=" flex gap-5">
+              <div className="flex gap-5">
                 {groupOfIslands.map((island) => (
                   <label key={island.id} className="flex items-center">
                     <input
