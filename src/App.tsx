@@ -10,18 +10,11 @@ import axios from "./plugin/axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectRegions } from './redux/regionSlice';
 import { selectProject } from "./redux/projectSlice";
-import { selectData } from "./redux/dataSlice";
 import { setData } from "./redux/dataSlice";
 import { selectDate } from "./redux/dateSlice";
-import { useReactToPrint } from 'react-to-print';
 
-interface RegionData {
-  region: string;
-  operational: number;
-  DEVELOPMENTAL: number;
-  TRAINING: number;
-  WITHDRAW: number;
-}
+
+
 
 interface LguDetails {
   id: string;
@@ -66,7 +59,6 @@ function App() {
   const regionss = useSelector(selectRegions);
   const services = useSelector(selectProject);
   const dates = useSelector(selectDate);
-  const [filteredStats, setFilteredStats] = useState<MonthlyData>({});
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();

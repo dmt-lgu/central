@@ -126,7 +126,7 @@ function PhMap({
     }
 
     const newSelectedRegions = newClickedRegions.map(id => {
-      const regionInfo = phRegions.find(r => r.id === id);
+      
       return id;
     });
 

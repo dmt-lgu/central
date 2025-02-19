@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Chart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { useSelector } from 'react-redux';
@@ -292,7 +292,7 @@ const ChartsDashboard: React.FC = () => {
             <div className='w-full'>
               <Chart options={lineChartOptions} series={lineChartSeries} type="line" height={350} />
             </div>
-            <p className=' text-sm'>{`Trend analysis of operational and developmental metrics over time across `}
+            <p className=' text-sm'>{`Trend analysis of operational and developmental metrics over time across ${formatProjectList(regionss)} for `}
               <span className=' font-gbold'>{`${formatProjectList(project)} `}</span>
               from
               <span className=' font-gbold'>{` ${formatDateRange(date)}. `}</span>
