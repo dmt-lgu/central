@@ -259,14 +259,17 @@ const MapComponent: React.FC = () => {
     <PhMap
       springProps={springProps}
       data={data}
-      setData={setData}
-      calculateTotals={calculateTotals}
+
+
       selectedMonth={selectedMonth}
-      setSelectedRegion={setSelectedRegion}
-      selectedRegion={selectedRegion}
-      setResult={setResult}
-      clickedRegion={clickedRegion}
-      setClickedRegion={setClickedRegion}
+
+
+      setResult={setResult} setSelectedRegion={function (_regions: any): void {
+        throw new Error("Function not implemented.");
+      } } clickedRegion={undefined} setClickedRegion={function (_regions: any): void {
+        throw new Error("Function not implemented.");
+      } } 
+     
     />
   ), [springProps, data, calculateTotals, selectedMonth, selectedRegion, clickedRegion]);
 

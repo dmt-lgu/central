@@ -25,7 +25,7 @@ const DataPresentationOptions = () => {
 
   useEffect(() => {
     // Sync with Redux whenever the options change
-    dispatch(setCharts(presentationOptions.filter((option:any) => option.state).map(option => option.name)));
+    dispatch(setCharts(presentationOptions.filter((option:any) => option.state).map((option:any) => option.name)));
 
     // Save to localStorage whenever options change
     localStorage.setItem('charts', JSON.stringify(presentationOptions));

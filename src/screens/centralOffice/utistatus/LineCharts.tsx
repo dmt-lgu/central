@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
 import { selectData } from '@/redux/dataSlice';
@@ -32,14 +32,14 @@ function LineCharts() {
 
   useEffect(() => {
     const calculateTotals = () => {
-      const totals = {
+      const totals:any = {
         WP: { operational: Array(12).fill(0), developmental: Array(12).fill(0), training: Array(12).fill(0), withdraw: Array(12).fill(0) },
         CO: { operational: Array(12).fill(0), developmental: Array(12).fill(0), training: Array(12).fill(0), withdraw: Array(12).fill(0) },
         BP: { operational: Array(12).fill(0), developmental: Array(12).fill(0), training: Array(12).fill(0), withdraw: Array(12).fill(0) },
         BC: { operational: Array(12).fill(0), developmental: Array(12).fill(0), training: Array(12).fill(0), withdraw: Array(12).fill(0) },
       };
 
-      Object.entries(data).forEach(([permitType, permitData]) => {
+      Object.entries(data).forEach(([permitType, permitData]:any) => {
         permitData.forEach((monthData: any) => {
           const monthIndex = new Date(monthData.date).getMonth();
           monthData.data.forEach((regionData: any) => {
@@ -95,7 +95,7 @@ function LineCharts() {
       },
     },
     stroke: {
-      curve: 'straight',
+      curve: 'straight' as 'straight',
     },
     markers: {
       size: 5,
@@ -120,7 +120,7 @@ function LineCharts() {
     ...options,
     title: {
       text: 'Barangay Clearance',
-      align: 'left',
+      align: 'left' as 'left',
     },
     colors: ['#0136A8', '#F8CD1C', '#CE1126', '#72CFF1'],
     chart: {

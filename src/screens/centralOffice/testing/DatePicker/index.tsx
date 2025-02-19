@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect} from 'react';
 import Select from 'react-select';
 import { useDispatch, useSelector} from 'react-redux';
 import { selectDate } from '@/redux/dateSlice';
@@ -31,7 +31,7 @@ const customStyles = {
   })
 };
 
-const DatePicker: React.FC<DatePickerProps> = ({ onDateChange }) => {
+const DatePicker: React.FC<DatePickerProps> = () => {
   const date = useSelector(selectDate);
   const dispatch = useDispatch();
 

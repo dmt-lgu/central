@@ -39,10 +39,10 @@ interface PhMapProps {
   selectedMonth: string;
   data: DataItem[];
   setResult: (result: Totals) => void;
-  setSelectedRegion: (regions: string[]) => void;
+  setSelectedRegion: (regions: any) => void;
   springProps: any;
-  clickedRegion: string[] | null | undefined;  // Allow null/undefined
-  setClickedRegion: (regions: string[]) => void;
+  clickedRegion: any | null | undefined;  // Allow null/undefined
+  setClickedRegion: (regions: any) => void;
 }
 function PhMap({
   selectedMonth,
@@ -120,7 +120,7 @@ function PhMap({
     let newClickedRegions: string[];
 
     if (currentClickedRegions.includes(region.id)) {
-      newClickedRegions = currentClickedRegions.filter(id => id !== region.id);
+      newClickedRegions = currentClickedRegions.filter((id:any) => id !== region.id);
     } else {
       newClickedRegions = [...currentClickedRegions, region.id];
     }
