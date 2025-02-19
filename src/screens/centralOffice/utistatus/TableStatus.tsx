@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useSelector } from 'react-redux';
 import { selectData } from '@/redux/dataSlice';
@@ -21,15 +21,17 @@ function TableStatus() {
         BC: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
       };
 
-      Object.entries(data).forEach(([permitType, permitData]:any) => {
-        permitData.forEach((monthData: any) => {
-          monthData.data.forEach((regionData: any) => {
+      Object.entries(data).forEach(([permitType, permitData]: any) => {
+        // Use only the most recent month's data for all permit types
+        const mostRecentMonth = permitData[permitData.length - 1];
+        if (mostRecentMonth) {
+          mostRecentMonth.data.forEach((regionData: any) => {
             totals[permitType].operational += regionData.operational;
             totals[permitType].developmental += regionData.developmental;
             totals[permitType].training += regionData.training;
             totals[permitType].withdraw += regionData.withdraw;
           });
-        });
+        }
       });
 
       setPermits([

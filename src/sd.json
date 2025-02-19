@@ -1,0 +1,38 @@
+[
+    {
+        "date": "2024-01",
+        "data": [
+            {
+                "region": "R10",
+                "operational": 54,
+                "developmental": 2,
+                "training": 2,
+                "withdraw": 0
+            }
+        ]
+    },
+    {
+        "date": "2024-02",
+        "data": [
+            {
+                "region": "R10",
+                "operational": 54,
+                "developmental": 2,
+                "training": 2,
+                "withdraw": 0
+            }
+        ]
+    },
+    {
+        "date": "2024-03",
+        "data": [
+            {
+                "region": "R10",
+                "operational": 54,
+                "developmental": 2,
+                "training": 2,
+                "withdraw": 0
+            }
+        ]
+    }
+]

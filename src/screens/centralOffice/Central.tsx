@@ -16,18 +16,17 @@ const INITIAL_RESULT = {
 };
 
 function Central() {
-  const [result, setResult] = useState(INITIAL_RESULT);
-  const [data, setData] = useState<any[]>([]);
-  const [clickedRegion, setClickedRegion] = useState<string | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<string>('All Months');
+  const [_result, setResult] = useState(INITIAL_RESULT);
+  const [data, _setData] = useState<any[]>([]);
+  const [clickedRegion, setClickedRegion] = useState<string[] | null>(null);
+  const [selectedMonth, _setSelectedMonth] = useState<string>('All Months');
   const [selectedRegion, setSelectedRegion] = useState<string[] | null>(null);
-  const [selectedValue, setSelectedValue] = useState<any>('');
-  const [selectedValue2, setSelectedValue2] = useState<any>('');
-  const [selectedDates, setSelectedDates] = useState<string[]>(['2024-01']);
+
+  const [_selectedDates, setSelectedDates] = useState<string[]>(['2024-01']);
  
 
   // Transform state for zoom and pan
-  const [transform, setTransform] = useState({
+  const [_transform, setTransform] = useState({
     scale: 1,
     x: 0,
     y: 0,
@@ -89,8 +88,8 @@ function Central() {
     },
     {
       drag: {
-        from: () => [transformRef.current.x, transformRef.current.y],
         bounds: { left: -300, right: 300, top: -300, bottom: 300 },
+        initial: () => [transformRef.current.x, transformRef.current.y],
       },
     }
   );
@@ -118,10 +117,10 @@ function Central() {
       <PhMap
         springProps={springProps}
         data={data}
-        setData={setData}
+    
         selectedMonth={selectedMonth}
         setSelectedRegion={setSelectedRegion}
-        selectedRegion={selectedRegion}
+     
         setResult={setResult}
         clickedRegion={clickedRegion}
         setClickedRegion={setClickedRegion}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { selectData } from '@/redux/dataSlice';
 import { useSelector } from 'react-redux';
@@ -26,22 +26,28 @@ function BarChart() {
 
   useEffect(() => {
     const calculateTotals = () => {
-      const totals = {
+      const totals:any = {
         WP: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
         CO: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
         BP: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
         BC: { operational: 0, developmental: 0, training: 0, withdraw: 0 },
       };
 
-      Object.entries(data).forEach(([permitType, permitData]) => {
-        permitData.forEach((monthData: any) => {
-          monthData.data.forEach((regionData: any) => {
+      // Get the most recent data for each permit type
+      Object.entries(data).forEach(([permitType, permitData]:any) => {
+        // Check if there's data available
+        if (permitData.length > 0) {
+          // Get the most recent month's data (last item in the array)
+          const mostRecentData = permitData[permitData.length - 1];
+          
+          // Process the most recent data
+          mostRecentData.data.forEach((regionData: any) => {
             totals[permitType].operational += regionData.operational;
             totals[permitType].developmental += regionData.developmental;
             totals[permitType].training += regionData.training;
             totals[permitType].withdraw += regionData.withdraw;
           });
-        });
+        }
       });
 
       setChartSeries([
@@ -89,7 +95,7 @@ function BarChart() {
 
   const chartOptions = {
     chart: {
-      type: 'bar',
+      type: 'bar' as 'bar',
     },
     plotOptions: {
       bar: {
@@ -113,7 +119,7 @@ function BarChart() {
       },
     },
     title: {
-      text: 'Comparison of Different Types of Permits',
+      text: 'Comparison of Different Types of Permits (Most Recent)',
     },
     colors: ['#0136A8', '#F8CD1C', '#CE1126', '#72CFF1'],
   };
