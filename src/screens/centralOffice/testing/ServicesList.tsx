@@ -34,7 +34,7 @@ const LGUServiceDropdown = () => {
     <div
       className={
         isOpen
-          ? "relative mt-2 outline-none w-full h-[270px] rounded-[100px]"
+          ? "relative mt-2 outline-none w-full min-h-[280px] mb-5 rounded-[100px]"
           : "rounded-none mt-2 outline-none relative w-full"
       }
     >
