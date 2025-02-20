@@ -91,20 +91,20 @@ const RegionSelector = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg">
+        <div className="absolute z-50 md:z-0 mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg">
           <div className="p-4">
             <div className="mb-4">
               <h3 className="text-sm font-gmedium text-blue-600 mb-2">Group of Islands</h3>
               <div className="flex gap-5">
                 {groupOfIslands.map((island) => (
-                  <label key={island.id} className="flex items-center">
+                  <label key={island.id} className="flex items-center ">
                     <input
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
                       checked={selectedIslands.includes(island.id)}
                       onChange={() => handleIslandChange(island.id)}
                     />
-                    <span className="ml-2 text-sm text-gray-700">{island.name}</span>
+                    <span className="ml-2 text-sm text-gray-700 md:text-xs">{island.name}</span>
                   </label>
                 ))}
               </div>
@@ -121,7 +121,7 @@ const RegionSelector = () => {
                       checked={regionss.includes(region.id)}
                       onChange={() => handleRegionChange(region.id)}
                     />
-                    <span className="ml-2 text-sm text-gray-700">{region.name}</span>
+                    <span className="ml-2 text-sm text-gray-700 md:text-[10px]">{region.name}</span>
                   </label>
                 ))}
               </div>

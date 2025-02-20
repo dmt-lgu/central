@@ -134,8 +134,8 @@ function Central() {
       <div className="min-h-[100vh] w-full z-10 flex flex-col items-center">
         <div className="w-[90%] md:mt-52 flex flex-col gap-10 min-h-[10px]">
           <div className="w-ful  items-center  gap-5 justify-between px-5 flex min-h-[100px] bg-[#ebeff5] border rounded-sm md:flex-col md:py-2 md:gap-3">
-            <div className="flex gap-2 md:w-full">
-            <DatePicker onDateChange={setSelectedDates} />
+            <div className="flex gap-2 md:w-full md:z-[200] z-[200]">
+              <DatePicker onDateChange={setSelectedDates} />
             </div>
             <div className=" md:z-[100] w-[30%] md:w-full">
               <RegionSelector />
