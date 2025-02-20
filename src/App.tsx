@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import viteLogo from "/DICT.png";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ChevronUp, ListFilter, MenuIcon, X } from "lucide-react";
@@ -63,7 +63,6 @@ function App() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const componentRef = useRef<HTMLDivElement>(null);
 
   const menuItems = [
     { name: "Reports", path: "/central/reports" },
@@ -405,7 +404,7 @@ function App() {
     navigate(path);
   };
 
-  const [showScroll, setShowScroll] = useState(false);
+  const [showScroll, _setShowScroll] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
