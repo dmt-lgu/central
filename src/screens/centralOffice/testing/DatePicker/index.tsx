@@ -153,8 +153,8 @@ const DatePicker: React.FC<DatePickerProps> = () => {
   }, [selectedYear, selectedMonth, selectedQuarters, rangeStart, rangeEnd, isRangeSelection, selectedPeriod]);
 
   return (
-    <div className="relative inline-block">
-      <div className=" flex  gap-3 justify-center z-50 bg-white rounded-lg shadow-lg p-2 w-fit border border-gray-200 transform transition-all duration-200 ease-in-out hover:shadow-xl">
+    <div className="relative inline-block ">
+      <div className="md:flex-col se:w-[260px] flex gap-3 z-[10000] justify-center bg-white rounded-lg shadow-lg p-2 w-fit border border-gray-200 transform transition-all duration-200 ease-in-out hover:shadow-xl">
         <div className="flex gap-3 items-center ">
           <Select
             className="w-32"
@@ -184,8 +184,9 @@ const DatePicker: React.FC<DatePickerProps> = () => {
           />
         </div>
 
+       
         {selectedPeriod === 'month' && (
-          <div className=" flex gap-4 self-center">
+          <div className=" flex gap-4 self-center ">
             <label className="flex items-center justify-center gap-2 text-sm text-gray-600 ">
               <input
                 type="checkbox"
@@ -196,7 +197,7 @@ const DatePicker: React.FC<DatePickerProps> = () => {
               <span> Range</span>
             </label>
 
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center md:flex-col"> 
               {isRangeSelection ? (
                 <>
                   <Select
@@ -232,7 +233,7 @@ const DatePicker: React.FC<DatePickerProps> = () => {
         )}
 
         {selectedPeriod === 'quarter' && (
-          <div className="flex gap-3 h-full">
+          <div className="flex gap-3 h-full md:grid md:grid-cols-2 md:gap-2">
             {quarters.map((quarter) => (
               <label
                 key={quarter.value}
@@ -263,8 +264,11 @@ const DatePicker: React.FC<DatePickerProps> = () => {
             ))}
           </div>
         )}
-      </div>
+        </div>
+       
     </div>
+
+  
   );
 };
 
