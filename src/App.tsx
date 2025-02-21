@@ -200,7 +200,7 @@ function App() {
         </nav>
         <div className="min-h-[100vh] w-full z-10 flex flex-col items-center">
           <div className="w-[90%] flex flex-col gap-10 min-h-[10px]">
-            <div className="hidden md:fixed md:grid-cols-2 w-full items-start z-[50] justify-center md:flex px-5 md:mt-5 min-h-[70px] rounded-sm md:flex-col md:gap-3">
+            <div className="hidden md:fixed md:grid-cols-2 w-full items-start z-[100000] justify-center md:flex px-5 md:mt-5 min-h-[70px] rounded-sm md:flex-col md:gap-3">
               <button
                 className={`text-accent bg-blue-500 p-2 absolute rounded-md shadow-md ${isMenuOpen ? "hidden" : ""}`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -213,7 +213,7 @@ function App() {
               </div>
             </div>
             {isMenuOpen && (
-              <nav className="fixed top-0 md:overflow-auto md:h-full left-0 md:w-64 h-screen bg-[#0136a8] z-[99999] flex flex-col items-start p-5">
+              <nav className="fixed top-0 md:overflow-auto md:h-full left-0 md:w-64 h-screen bg-[#0136a8] z-[9999999] flex flex-col items-start p-5">
                 <button className="absolute top-4 left-52 text-white" onClick={() => setIsMenuOpen(false)}>
                   <X className='bg-red-600 rounded-sm' size={32} />
                 </button>
@@ -232,7 +232,7 @@ function App() {
               <div className="fixed inset-0 bg-black bg-opacity-50 z-30 md:transition-opacity md:duration-300 md:ease-in-out" onClick={() => setIsMenuOpen(false)}></div>
             )}
             <div className="flex-1 ml-[20vw] lg:ml-0">
-              <header className="md:fixed md:mt-24 sticky top-0 z-20 bg-white/20 backdrop-blur-md h-[100px] w-full px-20 md:px-5 flex items-center justify-between text-[#6B6B6B]">
+              <header className="md:fixed md:mt-24 sticky top-0 z-[100000] bg-white/20 backdrop-blur-md h-[100px] w-full px-20 md:px-5 flex items-center justify-between text-[#6B6B6B]">
                 <ul className="flex gap-10 md:text-base md:gap-5">
                   {menuItems.map((item) => (
                     <li
