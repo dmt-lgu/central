@@ -10,8 +10,7 @@ const LGUServiceDropdown = () => {
 
   // Services list
   const services = [
-    { name: "Business Permit V1" },
-    { name: "Business Permit V2" },
+    { name: "Business Permit" },
     { name: "Building Permit" },
     { name: "Certificate of Occupancy" },
     { name: "Working Permit" },
@@ -34,7 +33,7 @@ const LGUServiceDropdown = () => {
     <div
       className={
         isOpen
-          ? "relative mt-2 outline-none w-full min-h-[280px] mb-5 rounded-[100px]"
+          ? "relative mt-2 outline-none w-full min-h-[200px] mb-10 rounded-[100px]"
           : "rounded-none mt-2 outline-none relative w-full"
       }
     >

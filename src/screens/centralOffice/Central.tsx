@@ -6,6 +6,7 @@ import PhMap from './map/phMap';
 import ChartsDashboard from './testing/Charts';
 import DatePicker from './testing/DatePicker';
 import RegionSelector from './testing/RegionList';
+import Summary from './StatusSummary';
 
 const INITIAL_RESULT = {
   id: 'PH',
@@ -134,7 +135,7 @@ function Central() {
       <div className="min-h-[100vh] w-full z-10 flex flex-col items-center">
         <div className="w-[90%] md:mt-52 flex flex-col gap-10 min-h-[10px]">
           <div className="w-ful  items-center  gap-5 justify-between px-5 flex min-h-[100px] bg-[#ebeff5] border rounded-sm md:flex-col md:py-2 md:gap-3">
-            <div className="flex gap-2 md:w-full z-50">
+            <div className="flex gap-2 md:w-full z-10">
             <DatePicker onDateChange={setSelectedDates} />
             </div>
             <div className=" md:z-[100] w-[30%] md:w-full">
@@ -143,7 +144,14 @@ function Central() {
           </div>
 
           <div className="relative w-full flex md:flex-col h-full justify-between gap-10">
-            <div className="w-full h-full flex flex-col gap-10">
+
+            
+            <div className="w-full z-0 h-full flex flex-col gap-10">
+
+              <div className=' absolute z-10 right-0 p-5'>
+                <Summary/>
+                
+              </div>
               <div
                 ref={mapContainerRef}
                 {...bind()}

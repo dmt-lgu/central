@@ -11,7 +11,7 @@ interface LGU {
   district: string;
   level: string;
   incomeClass: string;
-  monthlyStatus: string;
+  monthlyStatus: any;
 }
 
 interface LGUData {
@@ -34,11 +34,22 @@ interface LGUData {
   sort: string;
 }
 
+type StatusColors = {
+  [key: string]: string;
+};
+
+const STATUS_COLORS: StatusColors = {
+  'Operational': 'text-green-600',
+  'Developmental': 'text-yellow-600',
+  'For Training/Others': 'text-blue-600',
+  'Withdraw': 'text-red-600'
+};
+
 const API_ENDPOINTS = {
-  BP: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input',
-  CO: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BPCO UR Input',
-  WP: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input',
-  BC: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input'
+  BPLS: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BP1 UR Input',
+  BPCO: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BPCO UR Input',
+  PBWP: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/WP UR Input',
+  PBCO: '18kaPQlN0_kA9i7YAD-DftbdVPZX35Qf33sVMkw_TcWc/values/BC UR Input'
 };
 
 const LGU: React.FC = () => {
@@ -110,7 +121,7 @@ const LGU: React.FC = () => {
         [serviceType]: status
       });
 
-      if (serviceType === 'BP' || !processedData.has(geocode)) {
+      if (serviceType === 'BPLS' || !processedData.has(geocode)) {
         processedData.set(geocode, {
           lguFullName: row[4] || '',
           monthlyStatus: { [serviceType]: status },
@@ -141,8 +152,11 @@ const LGU: React.FC = () => {
 
   const formatMonthlyStatus = (statuses: Record<string, string>) => {
     return Object.entries(statuses)
-      .map(([service, status]) => `${service}: ${status}`)
-      .join(' | ');
+      .map(([service, status]) => ({
+        service,
+        status,
+        colorClass: STATUS_COLORS[status] || 'text-gray-600'
+      }));
   };
 
   const fetchAllData = async () => {
@@ -201,19 +215,19 @@ const LGU: React.FC = () => {
   }, [lguList]);
 
   const handleSelect = (lgu: LGUData) => {
-    setSearch(lgu.lguFullName);
-    setSelectedLGU({
-      geocode: lgu.geocode,
-      lguFullName: lgu.lguFullName,
-      province: lgu.province,
-      region: lgu.region,
-      district: lgu.district,
-      level: lgu.level,
-      incomeClass: lgu.incomeClass,
-      monthlyStatus: formatMonthlyStatus(lgu.monthlyStatus)
-    });
-    setShowSuggestions(false);
-  };
+  setSearch(lgu.lguFullName);
+  setSelectedLGU({
+    geocode: lgu.geocode,
+    lguFullName: lgu.lguFullName,
+    province: lgu.province,
+    region: lgu.region,
+    district: lgu.district,
+    level: lgu.level,
+    incomeClass: lgu.incomeClass,
+    monthlyStatus: JSON.stringify(lgu.monthlyStatus) // Store as JSON string
+  });
+  setShowSuggestions(false);
+};
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -315,9 +329,22 @@ const LGU: React.FC = () => {
                   <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.incomeClass || "-"}</td>
                 </tr>
                 <tr>
-                  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">Utilization Status</th>
-                  <td className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">{selectedLGU?.monthlyStatus|| "-"}</td>
-                </tr>
+  <th className="py-3 px-4 border border-border font-gsemibold text-[#8E8E8E] text-sm">
+    Utilization Status
+  </th>
+  <td className="py-3 px-4 border border-border font-gsemibold text-sm">
+    {selectedLGU?.monthlyStatus ? (
+      <div className="flex flex-col gap-1">
+        {formatMonthlyStatus(JSON.parse(selectedLGU.monthlyStatus)).map((item, index) => (
+          <div key={index} className="flex gap-2">
+            <span className="text-[#8E8E8E]">{item.service}:</span>
+            <span className={item.colorClass}>{item.status}</span>
+          </div>
+        ))}
+      </div>
+    ) : "-"}
+  </td>
+</tr>
               </>
             )}
           </tbody>

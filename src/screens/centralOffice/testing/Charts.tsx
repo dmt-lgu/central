@@ -322,13 +322,23 @@ const ChartsDashboard: React.FC = () => {
   };
 
 
+  
+    const getPermitName = (permitType: string): string => {
+      switch (permitType.toUpperCase()) {
+        case 'BP':
+          return 'Business Permit';
+        case 'WP':
+          return 'Working Permit';
+        case 'BC':
+          return 'Barangay Clearance';
+        case 'CO':
+          return 'Certificate of Occupancy';
+        default:
+          return permitType;
+      }
+    };
 
-  const getTrendColor = (trend: string, metric: string) => {
-    if (metric === 'withdraw') {
-      return trend === 'increase' ? 'text-red-600' : trend === 'decrease' ? 'text-green-600' : 'text-gray-600';
-    }
-    return trend === 'increase' ? 'text-green-600' : trend === 'decrease' ? 'text-red-600' : 'text-gray-600';
-  };
+  
 
   const formatPercentage = (current: number, previous: number): string => {
     if (previous === 0) return '0%';
@@ -392,88 +402,87 @@ const ChartsDashboard: React.FC = () => {
         )}
 
         <div className="print-break" /> {/* Page break for analytics */}
-        {isLineGraphVisible && (
-        Object.entries(data).map(([service, serviceData]: [string, any]) => (
-          <div key={service} className="w-[68vw] bg-white rounded-lg shadow-md p-4 print:w-full print:shadow-none">
-            <h2 className="text-xl font-bold mb-4">{service}</h2>
-            <div className="overflow-x-auto print:overflow-visible">
-              <div className="flex gap-4 pb-4 w-full print:grid print:grid-cols-3 print:gap-4">
-                {serviceData.map((monthData: any, index: number) => {
-          const date = monthData.date;
-          // Sort regions to maintain consistent order
-          const sortedRegionData = [...monthData.data].sort((a, b) => 
-            a.region.localeCompare(b.region)
-          );
-          
-          return (
-            <div key={date} className="min-w-[250px] sm:min-w-[300px] flex-shrink-0 print:min-w-0">
-              <h3 className="font-bold text-lg mb-2">{date}</h3>
-              <div className="space-y-4">
-                {sortedRegionData.map((regionData: any) => {
-                  const prevMonthData =
-                    index > 0
-                      ? serviceData[index - 1].data.find(
-                          (d: any) => d.region === regionData.region
-                        )
-                      : null;
-
-                  return (
-                    <div
-                      key={`${date}-${regionData.region}`}
-                      className="bg-gray-50 p-4 rounded-lg shadow-sm h-[220px]" // Increased height
-                    >
-                      <h4 className="font-bold mb-2">{regionData.region + ` - ${date}`}</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {["operational", "developmental", "training", "withdraw"].map((type) => (
-                          <div
-                            key={type}
-                            className={`flex flex-col items-center gap-1 p-2 rounded ${getTrendColor(
-                              prevMonthData
-                                ? regionData[type] > prevMonthData[type]
+       {isLineGraphVisible && (
+  Object.entries(data).map(([service, serviceData]: [string, any]) => (
+    <div
+      key={service}
+      className="w-full max-w-6xl mx-auto bg-white rounded-xl shadow p-6 mb-8 print:w-full print:shadow-none"
+    >
+      <h2 className="text-lg font-bold mb-4 text-blue-900 border-b pb-2">
+        {getPermitName(service)}
+      </h2>
+      <div className="overflow-x-auto print:overflow-visible">
+        <div className="flex gap-4 pb-2 w-full print:grid print:grid-cols-3 print:gap-4">
+          {serviceData.map((monthData: any, index: number) => {
+            const date = monthData.date;
+            const sortedRegionData = [...monthData.data].sort((a, b) =>
+              a.region.localeCompare(b.region)
+            );
+            return (
+              <div
+                key={date}
+                className="min-w-[220px] sm:min-w-[260px] flex-shrink-0 print:min-w-0"
+              >
+                <div className="bg-gray-50 rounded-lg border border-gray-100 p-4 mb-2">
+                  <h3 className="font-semibold text-base text-gray-700 mb-2">{date}</h3>
+                  <div className="space-y-3">
+                    {sortedRegionData.map((regionData: any) => {
+                      const prevMonthData =
+                        index > 0
+                          ? serviceData[index - 1].data.find(
+                              (d: any) => d.region === regionData.region
+                            )
+                          : null;
+                      return (
+                        <div
+                          key={`${date}-${regionData.region}`}
+                          className="rounded-md h-[150px] bg-white border border-gray-200 p-3 mb-2"
+                        >
+                          <div className="font-medium text-gray-800 mb-1">{regionData.region}</div>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            {[
+                              { key: "operational", label: "Operational", color: "text-green-600" },
+                              { key: "developmental", label: "Developmental", color: "text-yellow-600" },
+                              { key: "training", label: "Training/Others", color: "text-blue-600" },
+                              { key: "withdraw", label: "Withdraw", color: "text-red-600" },
+                            ].map(({ key, label, color }) => {
+                              const trend = prevMonthData
+                                ? regionData[key] > prevMonthData[key]
                                   ? "increase"
-                                  : regionData[type] < prevMonthData[type]
+                                  : regionData[key] < prevMonthData[key]
                                   ? "decrease"
                                   : "stable"
-                                : "stable",
-                              type
-                            )}`}
-                          >
-                            <span className="font-medium text-sm whitespace-nowrap">
-                              {regionData[type]} {type === 'operational' ? 'Op' : 
-                                               type === 'developmental' ? 'Dev' : 
-                                               type === 'training' ? 'Train' : 'With'}
-                            </span>
-                            {prevMonthData && (
-                              <div className="flex flex-col items-center text-sm">
-                                <span>
-                                  {getTrendIcon(
-                                    regionData[type] > prevMonthData[type]
-                                      ? "increase"
-                                      : regionData[type] < prevMonthData[type]
-                                      ? "decrease"
-                                      : "stable"
+                                : "stable";
+                              return (
+                                <div key={key} className="flex flex-col items-start">
+                                  <span className={`font-semibold ${color}`}>
+                                    {label}: {regionData[key]}
+                                  </span>
+                                  {prevMonthData && (
+                                    <span className="flex items-center gap-1 text-gray-400">
+                                      {getTrendIcon(trend)}
+                                      <span className="text-xs">
+                                        {regionData[key] - prevMonthData[key]} ({formatPercentage(regionData[key], prevMonthData[key])})
+                                      </span>
+                                    </span>
                                   )}
-                                  {regionData[type] - prevMonthData[type]}
-                                </span>
-                                <span className="text-xs opacity-75">
-                                  ({formatPercentage(regionData[type], prevMonthData[type])})
-                                </span>
-                              </div>
-                            )}
+                                </div>
+                              );
+                            })}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          );
-        })}
-              </div>
-            </div>
-          </div>
-        )))}
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  ))
+)}
 
         <div className="print-break" /> {/* Page break for pie chart */}
 

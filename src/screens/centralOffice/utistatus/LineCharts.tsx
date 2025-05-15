@@ -152,6 +152,42 @@ function LineCharts() {
     },
   };
 
+  const optionsLCR = {
+    ...options,
+    title: {
+      text: 'Local Civil Registry',
+      align: 'left',
+    },
+    colors: ['#0136A8', '#F8CD1C', '#CE1126', '#72CFF1'],
+    chart: {
+      height: chartHeight,
+    },
+  };
+
+  const optionsENews = {
+    ...options,
+    title: {
+      text: 'eNews',
+      align: 'left',
+    },
+    colors: ['#0136A8', '#F8CD1C', '#CE1126', '#72CFF1'],
+    chart: {
+      height: chartHeight,
+    },
+  };
+
+  const optionsECedula = {
+    ...options,
+    title: {
+      text: 'eCedula',
+      align: 'left',
+    },
+    colors: ['#0136A8', '#F8CD1C', '#CE1126', '#72CFF1'],
+    chart: {
+      height: chartHeight,
+    },
+  };
+
   return (
     <div className='grid grid-cols-2 gap-4 w-full md:grid-cols-1'>
       <div className='bg-white rounded-lg border shadow-md p-3'>
@@ -165,6 +201,15 @@ function LineCharts() {
       </div>
       <div className='bg-white rounded-lg border shadow-md p-3'>
         <Chart options={optionsCO} series={seriesCO} type="line" />
+      </div>
+      <div className='bg-white rounded-lg border shadow-md p-3'>
+        <Chart options={optionsLCR } series={seriesCO} type="line" />
+      </div>
+      <div className='bg-white rounded-lg border shadow-md p-3'>
+        <Chart options={optionsENews } series={seriesCO} type="line" />
+      </div>
+      <div className='bg-white rounded-lg border shadow-md p-3'>
+        <Chart options={optionsECedula } series={seriesCO} type="line" />
       </div>
     </div>
   );

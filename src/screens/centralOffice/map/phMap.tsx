@@ -179,7 +179,7 @@ function PhMap({
             pointerEvents="none"
             dominantBaseline="middle"
           >
-            {['NIR', 'BARMM', 'NCR', 'CAR'].includes(region.id) ? region.id : region.id
+            {['NIR', 'BARMM I', 'NCR', 'CAR'].includes(region.id) ? region.id : region.id
   }
           </text>
         </g>

@@ -71,6 +71,33 @@ function TableStatus() {
             totals.CO.withdraw,
           ],
         },
+        {
+          name: 'Local Civil Registry',
+          values: [
+            0,
+            0,
+            0,
+            0,
+          ],
+        },
+        {
+          name: 'eNews',
+          values: [
+            0,
+            0,
+            0,
+            0,
+          ],
+        },
+        {
+          name: 'eCedulla ',
+          values: [
+            0,
+            0,
+            0,
+            0,
+          ],
+        },
       ]);
     };
 
