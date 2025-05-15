@@ -5,7 +5,6 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ListFilter } from "lucide-react";
 import LGUServiceDropdown from "./screens/centralOffice/testing/ServicesList";
 import DataPresentationOptions from "./screens/centralOffice/testing/DataPresentationOptions";
-import Profile from "./assets/Layer_1@2x.png";
 import axios from "./plugin/axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectRegions } from './redux/regionSlice';

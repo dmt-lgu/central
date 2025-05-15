@@ -338,10 +338,18 @@ const ChartsDashboard: React.FC = () => {
       }
     };
 
-  
+  const getTrendColor = (trend: string, metric: string) => {
+    if (metric === 'withdraw') {
+      return trend === 'increase' ? 'text-red-600' : trend === 'decrease' ? 'text-green-600' : 'text-gray-600';
+    }
+    return trend === 'increase' ? 'text-green-600' : trend === 'decrease' ? 'text-red-600' : 'text-gray-600';
+  };
 
   const formatPercentage = (current: number, previous: number): string => {
-    if (previous === 0) return '0%';
+    if (previous === 0) {
+      if (current === 0) return '0%';
+      return '+100%'; // or '+∞%' if you want
+    }
     const percentage = ((current - previous) / previous) * 100;
     return `${percentage > 0 ? '+' : ''}${percentage.toFixed(1)}%`;
   };
@@ -441,34 +449,34 @@ const ChartsDashboard: React.FC = () => {
                           <div className="font-medium text-gray-800 mb-1">{regionData.region}</div>
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             {[
-                              { key: "operational", label: "Operational", color: "text-green-600" },
-                              { key: "developmental", label: "Developmental", color: "text-yellow-600" },
-                              { key: "training", label: "Training/Others", color: "text-blue-600" },
-                              { key: "withdraw", label: "Withdraw", color: "text-red-600" },
-                            ].map(({ key, label, color }) => {
-                              const trend = prevMonthData
-                                ? regionData[key] > prevMonthData[key]
-                                  ? "increase"
-                                  : regionData[key] < prevMonthData[key]
-                                  ? "decrease"
-                                  : "stable"
-                                : "stable";
-                              return (
-                                <div key={key} className="flex flex-col items-start">
-                                  <span className={`font-semibold ${color}`}>
-                                    {label}: {regionData[key]}
-                                  </span>
-                                  {prevMonthData && (
-                                    <span className="flex items-center gap-1 text-gray-400">
-                                      {getTrendIcon(trend)}
-                                      <span className="text-xs">
-                                        {regionData[key] - prevMonthData[key]} ({formatPercentage(regionData[key], prevMonthData[key])})
-                                      </span>
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })}
+  { key: "operational", label: "Operational", color: "text-green-600" },
+  { key: "developmental", label: "Developmental", color: "text-yellow-600" },
+  { key: "training", label: "Training/Others", color: "text-blue-600" },
+  { key: "withdraw", label: "Withdraw", color: "text-red-600" },
+].map(({ key, label, color }) => {
+  const trend = prevMonthData
+    ? regionData[key] > prevMonthData[key]
+      ? "increase"
+      : regionData[key] < prevMonthData[key]
+      ? "decrease"
+      : "stable"
+    : "stable";
+  return (
+    <div key={key} className="flex flex-col items-start">
+      <span className={`font-semibold ${color}`}>
+        {label}: {regionData[key]}
+      </span>
+      {prevMonthData && (
+        <span className="flex items-center gap-1 text-gray-400">
+          {getTrendIcon(trend)}
+          <span className={`text-xs ${getTrendColor(trend, key)}`}>
+            {regionData[key] - prevMonthData[key]} ({formatPercentage(regionData[key], prevMonthData[key])})
+          </span>
+        </span>
+      )}
+    </div>
+  );
+})}
                           </div>
                         </div>
                       );
